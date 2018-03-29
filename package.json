@@ -1,0 +1,37 @@
+{
+  "name": "puppeteer-ie",
+  "version": "0.1.0",
+  "descripton": "Headless Internet Explorer** NodeJS API inspired by Puppeteer.",
+  "keywords": [
+    "internet-explorer",
+    "headless-browsers",
+    "activex-control",
+    "puppeteer"
+  ],
+  "main": "source/index.js",
+  "dependencies": {
+    "winax": "^1.0.7"
+  },
+  "devDependencies": {
+    "docdash": "^0.4.0",
+    "eslint": "^4.19.1",
+    "html-pages": "^2.1.1",
+    "jsdoc": "^3.5.5",
+    "jsdoc-inheritance-diagram": "^1.2.1"
+  },
+  "scripts": {
+    "document": "jsdoc ./source/ -c ./build/document.json",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "help": "html-pages docs/ -o"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TechQuery/Puppeteer-IE.git"
+  },
+  "author": "shiy007@qq.com",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/TechQuery/Puppeteer-IE/issues"
+  },
+  "homepage": "https://github.com/TechQuery/Puppeteer-IE#readme"
+}
