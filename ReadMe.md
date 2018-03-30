@@ -1,6 +1,6 @@
 # Puppeteer-IE
 
-Headless **Internet Explorer** NodeJS API inspired by [Puppeteer](https://github.com/GoogleChrome/puppeteer).
+Headless **Internet Explorer** NodeJS API inspired by [Puppeteer](https://github.com/GoogleChrome/puppeteer). Please note that Microsoft Edge is not supported by this package as it utilizes ActiveX whereas Edge uses the WebDriver protocol for automation.
 
 [![NPM Dependency](https://david-dm.org/TechQuery/Puppeteer-IE.svg)](https://david-dm.org/TechQuery/Puppeteer-IE)
 
@@ -11,7 +11,7 @@ Headless **Internet Explorer** NodeJS API inspired by [Puppeteer](https://github
 ## Installation
 
 ```Shell
-npm install
+npm install puppeteer-ie
 ```
 
 **[ Notice ]**  If you get some error at installing, try to execute the command below:
