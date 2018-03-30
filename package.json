@@ -1,7 +1,7 @@
 {
   "name": "puppeteer-ie",
-  "version": "0.1.0",
-  "descripton": "Headless Internet Explorer** NodeJS API inspired by Puppeteer.",
+  "version": "0.2.0",
+  "descripton": "Headless Internet Explorer NodeJS API inspired by Puppeteer.",
   "keywords": [
     "internet-explorer",
     "headless-browsers",
@@ -9,18 +9,27 @@
     "puppeteer"
   ],
   "main": "source/index.js",
+  "engines": {
+    "node": "^7.6.0"
+  },
   "dependencies": {
     "winax": "^1.0.7"
   },
   "devDependencies": {
     "docdash": "^0.4.0",
     "eslint": "^4.19.1",
+    "fs-extra": "^5.0.0",
+    "fs-match": "^0.2.1",
     "html-pages": "^2.1.1",
+    "js-beautify": "^1.7.5",
     "jsdoc": "^3.5.5",
-    "jsdoc-inheritance-diagram": "^1.2.1"
+    "jsdoc-inheritance-diagram": "^1.2.1",
+    "reduce-blank": "^0.2.0"
   },
   "scripts": {
     "document": "jsdoc ./source/ -c ./build/document.json",
+    "clean": "cd ./docs/  &&  reduce-blank  &&  node ../build/beautifyDoc",
+    "build": "npm run document  &&  npm run clean",
     "test": "echo \"Error: no test specified\" && exit 1",
     "help": "html-pages docs/ -o"
   },
