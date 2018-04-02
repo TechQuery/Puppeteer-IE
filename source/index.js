@@ -44,7 +44,14 @@ async function clear(error) {
 
     await Promise.all( stack.map(browser => browser.close()) );
 
-    throw error;
+    if (error instanceof Error) {
+
+        console.error( error );
+
+        process.exit(1);
+    }
+
+    process.exit(0);
 }
 
 for (let event  of  ['uncaughtException', 'unhandledRejection', 'SIGINT', 'exit'])

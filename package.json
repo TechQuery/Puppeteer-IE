@@ -24,13 +24,16 @@
     "js-beautify": "^1.7.5",
     "jsdoc": "^3.5.5",
     "jsdoc-inheritance-diagram": "^1.2.1",
-    "reduce-blank": "^0.2.0"
+    "mocha": "^5.0.5",
+    "reduce-blank": "^0.2.0",
+    "should": "^13.2.1"
   },
   "scripts": {
     "document": "jsdoc ./source/ -c ./build/document.json",
     "clean": "cd ./docs/  &&  reduce-blank  &&  node ../build/beautifyDoc",
     "build": "npm run document  &&  npm run clean",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --recursive --no-timeouts -c --inline-diffs --exit",
+    "debug": "npm test -- --inspect-brk",
     "help": "html-pages docs/ -o"
   },
   "repository": {
@@ -42,5 +45,5 @@
   "bugs": {
     "url": "https://github.com/TechQuery/Puppeteer-IE/issues"
   },
-  "homepage": "https://github.com/TechQuery/Puppeteer-IE#readme"
+  "homepage": "https://techquery.github.io/Puppeteer-IE/"
 }

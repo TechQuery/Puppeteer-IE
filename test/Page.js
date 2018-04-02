@@ -1,0 +1,93 @@
+'use strict';
+
+require('should');
+
+const Page = require('../source/Page');
+
+const page = new Page( false );
+
+const exit = page.close.bind( page );
+
+for (let event  of  ['uncaughtException', 'unhandledRejection', 'SIGINT', 'exit'])
+    process.on(event, exit);
+
+
+describe('Page',  function () {
+
+    before( page.goto.bind(page,  process.env.npm_package_homepage) );
+
+
+    describe('Property',  function () {
+
+        it('Title',  function () {
+
+            page.title().should.be.equal('Home - Documentation');
+        });
+
+        it('URL',  function () {
+
+            page.url().should.be.equal( process.env.npm_package_homepage );
+        });
+    });
+
+    describe('Selector',  function () {
+
+        it('.prototype.$()',  async function () {
+
+            (await page.$('a')).textContent.should.be.equal('Home');
+        });
+
+        it('.prototype.$$()',  async function () {
+
+            const list = (await page.$$('h2 a')).map(link => link.textContent);
+
+            list.should.be.eql( ['Home'] );
+        });
+    });
+
+    describe('.prototype.evaluate()',  function () {
+
+        it('Expression',  function () {
+
+            return page.evaluate('document.title')
+                .should.be.fulfilledWith('Home - Documentation');
+        });
+
+        it('Function',  function () {
+
+            return page.evaluate(function () {
+
+                return document.title;
+
+            }).should.be.fulfilledWith('Home - Documentation');
+        });
+
+        it('Function with parameter',  function () {
+
+            return page.evaluate(function (name, version) {
+
+                return document.title + ' - ' + name + ' ' + version;
+
+            }, 'IE', 11).should.be.fulfilledWith('Home - Documentation - IE 11');
+        });
+    });
+
+    describe('Event',  function () {
+
+        it('.prototype.click()',  async function () {
+
+            await page.click('a');
+
+            await page.waitForNavigation();
+
+            page.url().should.be.equal(process.env.npm_package_homepage  +  'index.html');
+        });
+
+        it('.prototype.focus()',  async function () {
+
+            await page.focus('a');
+
+            (await page.evaluate('document.activeElement.textContent')).should.be.equal('Home');
+        });
+    });
+});

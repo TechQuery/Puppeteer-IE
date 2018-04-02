@@ -51,37 +51,50 @@ class Page extends EventEmitter {
         return  this._target.LocationName + '';
     }
 
-    goto(url = 'about:blank') {
-
-        this._target.navigate( url );
+    async waitForNavigation() {
 
         const IE = this._target;
 
-        return  new Promise(function (resolve) {
+        await  new Promise(function (resolve) {
 
             setTimeout(function check() {
 
-                if (IE.Busy.valueOf() === false)
+                if (IE.Busy  &&  (IE.Busy.valueOf() === false))
                     resolve();
                 else
                     setTimeout( check );
             });
         });
+
+        this.emit('load');
+    }
+
+    goto(url = 'about:blank') {
+
+        this._target.Navigate( url );
+
+        return this.waitForNavigation();
     }
 
     async goBack() {
 
         this._target.GoBack();
+
+        return this.waitForNavigation();
     }
 
     async goForward() {
 
         this._target.GoForward();
+
+        return this.waitForNavigation();
     }
 
     async reload() {
 
         this._target.Refresh();
+
+        return this.waitForNavigation();
     }
 
     async close() {
@@ -91,6 +104,21 @@ class Page extends EventEmitter {
         WinAX.release( this._target );
 
         this.emit('close');
+    }
+
+    async content() {
+
+        const DocType = this.document.doctype;
+
+        var type = `<!DocType ${(DocType.name + '').toUpperCase()}`;
+
+        if ( DocType.publicId.valueOf() )
+            type += ` Public "${DocType.publicId}"`;
+
+        if ( DocType.systemId.valueOf() )
+            type += ` "${DocType.systemId}"`;
+
+        return `${type}>${this.document.documentElement.outerHTML}`;
     }
 
     async $(selector = '') {
@@ -112,32 +140,52 @@ class Page extends EventEmitter {
 
     async evaluate(expression, ...parameter) {
 
-        expression = `self.name = JSON.stringify(${
-            (expression instanceof Function)  ?
-                `(${expression})(${
-                    parameter.map(item => JSON.stringify( item ))
-                })` :
-                `(function () { return ${expression}; })()`
-        })`;
+        expression = (expression instanceof Function)  ?
+            `(${expression})(${
+                parameter.map(item => JSON.stringify( item ))
+            })` :
+            `(function () { return ${expression}; })()`;
 
-        this.window.execScript( expression );
+        try {
+            this.window.execScript(
+                `self.name = JSON.stringify(${ expression }) || ''`
+            );
+        } catch (error) {
 
-        return  JSON.parse( this.window.name );
+            console.warn( expression );
+
+            throw error;
+        }
+
+        return  this.window.name  &&  JSON.parse( this.window.name );
     }
 
-    async content() {
+    trigger(selector, type, name, bubble, cancel) {
 
-        const DocType = this.document.doctype;
+        return  this.evaluate(function (selector, type, name, bubble, cancel) {
 
-        var type = `<!DocType ${(DocType.name + '').toUpperCase()}`;
+            var target = document.querySelector( selector ),
+                event = document.createEvent( type );
 
-        if ( DocType.publicId.valueOf() )
-            type += ` Public "${DocType.publicId}"`;
+            event.initEvent(name, bubble, cancel);
 
-        if ( DocType.systemId.valueOf() )
-            type += ` "${DocType.systemId}"`;
+            target.dispatchEvent( event );
 
-        return `${type}>${this.document.documentElement.outerHTML}`;
+        }, selector, type, name, bubble, cancel);
+    }
+
+    async click(selector) {
+
+        await this.trigger(selector, 'MouseEvent', 'mousedown', true, true);
+
+        await this.trigger(selector, 'MouseEvent', 'mouseup', true, true);
+
+        this.document.querySelector( selector ).click();
+    }
+
+    async focus(selector) {
+
+        this.document.querySelector( selector ).focus();
     }
 }
 

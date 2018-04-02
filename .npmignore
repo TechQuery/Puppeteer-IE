@@ -1,1 +1,5 @@
+build/
 docs/
+test/
+.editorconfig
+.eslintrc.json

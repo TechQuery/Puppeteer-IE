@@ -20,7 +20,7 @@ class Browser extends EventEmitter {
 
     async newPage() {
 
-        const page = new Page();
+        const page = new Page( this.headless );
 
         this._page.push( page );
 
