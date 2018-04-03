@@ -45,6 +45,42 @@ describe('Page',  function () {
         });
     });
 
+    it('Viewport',  async function () {
+
+        await page.setViewport({width: 1024,  height: 768});
+
+        (await page.viewport()).should.be.eql({
+            width:                1024,
+            height:               768,
+            deviceScaleFactor:    1,
+            isMobile:             false,
+            hasTouch:             false,
+            isLandscape:          true
+        });
+    });
+
+    describe('Injection',  function () {
+
+        it('.prototype.addStyleTag()',  async function () {
+
+            await page.addStyleTag({
+                content:    'body { color: blue; }'
+            });
+
+            (await page.evaluate('getComputedStyle( document.body ).color'))
+                .should.be.equal('rgb(0, 0, 255)');
+        });
+
+        it('.prototype.addScriptTag()',  async function () {
+
+            await page.addScriptTag({
+                content:    'self.__test__ = "Test";'
+            });
+
+            (await page.evaluate('self.__test__')).should.be.equal('Test');
+        });
+    });
+
     describe('.prototype.evaluate()',  function () {
 
         it('Expression',  function () {

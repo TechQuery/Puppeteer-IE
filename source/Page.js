@@ -1,6 +1,8 @@
 'use strict';
 
-const EventEmitter = require('events'), WinAX = require('winax');
+const EventEmitter = require('events'), Path = require('path');
+
+const WinAX = require('winax');
 
 
 /**
@@ -15,9 +17,11 @@ class Page extends EventEmitter {
 
         super();
 
-        this._target = new ActiveXObject('InternetExplorer.Application');
+        const IE = this._target = new ActiveXObject('InternetExplorer.Application');
 
-        this._target.Visible = !headless;
+        IE.Visible = !headless;
+
+        IE.MenuBar = IE.StatusBar =  false;
     }
 
     static proxy(COM) {
@@ -37,6 +41,22 @@ class Page extends EventEmitter {
         });
     }
 
+    static waitFor(filter,  timeOut = 30000) {
+
+        return  new Promise(function (resolve, reject) {
+
+            var start = Date.now();
+
+            setTimeout(function check(result) {
+
+                if (timeOut  &&  ((Date.now() - start)  >=  timeOut))
+                    return reject();
+
+                (result = filter())  ?  resolve( result )  :  setTimeout( check );
+            });
+        });
+    }
+
     get document() {  return  Page.proxy( this._target.Document );  }
 
     get window() {  return  Page.proxy( this.document.defaultView );  }
@@ -51,22 +71,19 @@ class Page extends EventEmitter {
         return  this._target.LocationName + '';
     }
 
-    async waitForNavigation() {
+    async waitForNavigation({ timeout }) {
 
-        const IE = this._target;
-
-        await  new Promise(function (resolve) {
-
-            setTimeout(function check() {
-
-                if (IE.Busy  &&  (IE.Busy.valueOf() === false))
-                    resolve();
-                else
-                    setTimeout( check );
-            });
-        });
+        await Page.waitFor(
+            ()  =>  this._target.Busy  &&  (this._target.Busy == false),
+            timeout
+        );
 
         this.emit('load');
+    }
+
+    waitForSelector(selector,  { timeout }) {
+
+        return  Page.waitFor(() => this.$( selector ),  timeout);
     }
 
     goto(url = 'about:blank') {
@@ -121,6 +138,15 @@ class Page extends EventEmitter {
         return `${type}>${this.document.documentElement.outerHTML}`;
     }
 
+    async setContent(HTML) {
+
+        this.document.open();
+
+        this.document.write( HTML );
+
+        this.document.close();
+    }
+
     async $(selector = '') {
 
         return  Page.proxy( this.document.querySelector( selector ) );
@@ -142,7 +168,11 @@ class Page extends EventEmitter {
 
         expression = (expression instanceof Function)  ?
             `(${expression})(${
-                parameter.map(item => JSON.stringify( item ))
+                parameter.filter(
+                    value  =>  (value !== undefined)
+                ).map(
+                    item  =>  JSON.stringify( item )
+                )
             })` :
             `(function () { return ${expression}; })()`;
 
@@ -160,18 +190,74 @@ class Page extends EventEmitter {
         return  this.window.name  &&  JSON.parse( this.window.name );
     }
 
-    trigger(selector, type, name, bubble, cancel) {
+    setViewport({width, height}) {
 
-        return  this.evaluate(function (selector, type, name, bubble, cancel) {
+        return  this.evaluate(function (width, height) {
 
-            var target = document.querySelector( selector ),
-                event = document.createEvent( type );
+            self.resizeTo(
+                self.outerWidth - self.innerWidth + width,
+                self.outerHeight - self.innerHeight + height
+            );
+        },  width,  height);
+    }
 
-            event.initEvent(name, bubble, cancel);
+    async viewport() {
 
-            target.dispatchEvent( event );
+        return Object.assign(
+            await this.evaluate(function () {
 
-        }, selector, type, name, bubble, cancel);
+                return {
+                    width:     self.innerWidth,
+                    height:    self.innerHeight
+                };
+            }),
+            {
+                deviceScaleFactor:    1,
+                isMobile:             false,
+                hasTouch:             false,
+                isLandscape:          true
+            }
+        );
+    }
+
+    async addStyleTag({path, url, content}) {
+
+        if ( path )  url = Path.resolve( path );
+
+        var CSS;
+
+        if ( url ) {
+            CSS = this.document.createElement('link');
+
+            CSS.rel = 'stylesheet',  CSS.href = url;
+        } else {
+            CSS = this.document.createElement('style');
+
+            CSS.textContent = content;
+        }
+
+        this.document.head.appendChild( CSS );
+    }
+
+    async addScriptTag({path, url, content}) {
+
+        if ( path )  url = Path.resolve( path );
+
+        var JS = this.document.createElement('script');
+
+        JS[url ? 'src' : 'text'] = url || content;
+
+        this.document.head.appendChild( JS );
+    }
+
+    async trigger(selector, type, name, bubble, cancel) {
+
+        var target = this.document.querySelector( selector ),
+            event = this.document.createEvent( type );
+
+        event.initEvent(name, bubble, cancel);
+
+        target.dispatchEvent( event );
     }
 
     async click(selector) {
