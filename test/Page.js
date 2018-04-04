@@ -4,7 +4,9 @@ require('should');
 
 const Page = require('../source/Page');
 
-const page = new Page( false );
+const page = new Page(
+    process.env.npm_config_argv.indexOf('--inspect')  <  0
+);
 
 const exit = page.close.bind( page );
 
@@ -21,7 +23,7 @@ describe('Page',  function () {
 
         it('Title',  function () {
 
-            page.title().should.be.equal('Home - Documentation');
+            return  page.title().should.be.fulfilledWith('Home - Documentation');
         });
 
         it('URL',  function () {

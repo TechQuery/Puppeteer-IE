@@ -4,6 +4,8 @@ const EventEmitter = require('events'), Path = require('path');
 
 const WinAX = require('winax');
 
+const Utility = require('./utility'), Mouse = require('./Mouse');
+
 
 /**
  * Page provides methods to interact with a single tab in Internet Explorer.
@@ -11,18 +13,20 @@ const WinAX = require('winax');
  *
  * @class
  * @extends EventEmitter
+ *
+ * @property {Mouse} mouse
  */
 class Page extends EventEmitter {
 
     constructor(headless = true) {
 
-        super();
+        const IE = super()._target = new ActiveXObject(
+            'InternetExplorer.Application'
+        );
 
-        const IE = this._target = new ActiveXObject('InternetExplorer.Application');
+        IE.Visible = !headless,  IE.MenuBar = IE.StatusBar =  false;
 
-        IE.Visible = !headless;
-
-        IE.MenuBar = IE.StatusBar =  false;
+        this.mouse = new Mouse( this );
     }
 
     static proxy(COM) {
@@ -39,22 +43,6 @@ class Page extends EventEmitter {
 
                 return  (name in getter)  ?  target.valueOf()  :  target;
             }
-        });
-    }
-
-    static waitFor(filter,  timeOut = 30000) {
-
-        return  new Promise(function (resolve, reject) {
-
-            var start = Date.now();
-
-            setTimeout(function check(result) {
-
-                if (timeOut  &&  ((Date.now() - start)  >=  timeOut))
-                    return reject();
-
-                (result = filter())  ?  resolve( result )  :  setTimeout( check );
-            });
         });
     }
 
@@ -84,11 +72,11 @@ class Page extends EventEmitter {
      *
      * @emits Page#load
      */
-    async waitForNavigation({timeout = 30000}) {
+    async waitForNavigation(options = {timeout: 30000}) {
 
-        await Page.waitFor(
-            ()  =>  this._target.Busy  &&  (this._target.Busy == false),
-            timeout
+        await Utility.waitFor(
+            options.timeout,
+            ()  =>  this._target.Busy  &&  (this._target.Busy == false)
         );
 
         this.emit('load');
@@ -159,6 +147,8 @@ class Page extends EventEmitter {
      * @emits Page#close
      */
     async close() {
+
+        if ( arguments[0] )  console.warn( arguments[0] );
 
         this._target.Quit();
 
@@ -244,9 +234,9 @@ class Page extends EventEmitter {
      *
      * @return {Promise<ElementHandle>} Promise which resolves when element specified by selector string is added to DOM
      */
-    waitForSelector(selector,  {timeout = 30000}) {
+    waitForSelector(selector,  options = {timeout: 30000}) {
 
-        return  Page.waitFor(() => this.$( selector ),  timeout);
+        return  Utility.waitFor(options.timeout,  () => this.$( selector ));
     }
 
     /**
@@ -279,6 +269,19 @@ class Page extends EventEmitter {
         }
 
         return  this.window.name  &&  JSON.parse( this.window.name );
+    }
+
+    isSameElement(pointA, pointB) {
+
+        return  this.evaluate(function (A, B) {
+
+            A = document.elementFromPoint(A[0], A[1]);
+
+            B = document.elementFromPoint(B[0], B[1]);
+
+            return  !(A.contains( B )  ||  B.contains( A ));
+
+        },  pointA,  pointB);
     }
 
     /**
@@ -377,14 +380,87 @@ class Page extends EventEmitter {
         this.document.head.appendChild( JS );
     }
 
-    async trigger(selector, type, name, bubble, cancel) {
+    /**
+     * This method fetches an element with selector and focuses it.
+     * If there's no element matching selector, the method throws an error.
+     *
+     * @param {string} selector - A selector of an element to focus.
+     *                            If there are multiple elements satisfying the selector,
+     *                            the first will be focused.
+     * @return {Promise} Promise which resolves when the element matching selector is successfully focused.
+     *                   The promise will be rejected if there is no element matching selector.
+     */
+    async focus(selector) {
 
-        var target = this.document.querySelector( selector ),
-            event = this.document.createEvent( type );
+        this.document.querySelector( selector ).focus();
+    }
+
+    async elementOf(expression) {
+
+        return  this.document.all(await this.evaluate(`${expression}.sourceIndex`));
+    }
+
+    async trigger(target,  type,  name,  bubble,  cancel,  more = { }) {
+
+        const document = this.document;
+
+        if (typeof target === 'string')
+            target = document.querySelector( target );
+        else if (target instanceof Array)
+            target = await this.elementOf( `document.elementFromPoint(${ target })` );
+
+        const event = document.createEvent( type );
 
         event.initEvent(name, bubble, cancel);
 
-        target.dispatchEvent( event );
+        return  await new Promise((resolve) => {
+
+            setTimeout(() => resolve(
+                target.dispatchEvent( Object.assign(event, more) )
+            ));
+        });
+    }
+
+    async centerOf(selector) {
+
+        const BCR = await this.evaluate(function (selector) {
+
+            var BCR = document.querySelector( selector ).getBoundingClientRect();
+
+            return {
+                left:      BCR.left,
+                right:     BCR.right,
+                top:       BCR.top,
+                bottom:    BCR.bottom,
+                width:     BCR.width,
+                height:    BCR.height
+            };
+        },  selector);
+
+        return  [BCR.left + BCR.width / 2,  BCR.top + BCR.height / 2];
+    }
+
+    /**
+     * This method fetches an element with selector, scrolls it into view if needed,
+     * and then uses page.mouse to hover over the center of the element.
+     *
+     * If there's no element matching selector, the method throws an error.
+     *
+     * @param {string} selector - A selector to search for element to hover.
+     *                            If there are multiple elements satisfying the selector,
+     *                            the first will be hovered.
+     * @return {Promise} Promise which resolves when the element matching selector is successfully hovered.
+     *                   Promise gets rejected if there's no element matching selector.
+     */
+    async hover(selector) {
+
+        const target = this.document.querySelector( selector );
+
+        target.scrollIntoView();
+
+        const center = await this.centerOf( selector );
+
+        this.mouse.move(center[0], center[1]);
     }
 
     /**
@@ -399,31 +475,25 @@ class Page extends EventEmitter {
      * @param {string} selector - A selector to search for element to click.
      *                            If there are multiple elements satisfying the selector,
      *                            the first will be clicked.
+     * @param {object} [options]
+     * @param {string} [options.button='left'] `left`, `right`, or `middle`
+     * @param {number} [options.clickCount=1]  {@link https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail|UIEvent.detail}
+     * @param {number} [options.delay=0]       Time to wait between `mousedown` and `mouseup` in milliseconds
+     *
      * @return {Promise} Promise which resolves when the element matching selector is successfully clicked.
      *                   The Promise will be rejected if there is no element matching selector.
      */
-    async click(selector) {
+    async click(selector,  options = {button: 'left', clickCount: 1, delay: 0}) {
 
-        await this.trigger(selector, 'MouseEvent', 'mousedown', true, true);
+        const target = this.document.querySelector( selector );
 
-        await this.trigger(selector, 'MouseEvent', 'mouseup', true, true);
+        target.scrollIntoView();
 
-        this.document.querySelector( selector ).click();
-    }
+        const center = await this.centerOf( selector );
 
-    /**
-     * This method fetches an element with selector and focuses it.
-     * If there's no element matching selector, the method throws an error.
-     *
-     * @param {string} selector - A selector of an element to focus.
-     *                            If there are multiple elements satisfying the selector,
-     *                            the first will be focused.
-     * @return {Promise} Promise which resolves when the element matching selector is successfully focused.
-     *                   The promise will be rejected if there is no element matching selector.
-     */
-    async focus(selector) {
+        await this.mouse.click(center[0], center[1], options);
 
-        this.document.querySelector( selector ).focus();
+        target.click();
     }
 }
 

@@ -1,8 +1,8 @@
 # Puppeteer-IE
 
-Headless **Internet Explorer** NodeJS API inspired by [Puppeteer](https://github.com/GoogleChrome/puppeteer). Please note that Microsoft Edge is not supported by this package as it utilizes ActiveX whereas Edge uses the WebDriver protocol for automation.
+Headless **Internet Explorer** NodeJS API inspired by [Puppeteer](https://github.com/GoogleChrome/puppeteer).
 
-[![NPM Dependency](https://david-dm.org/TechQuery/Puppeteer-IE.svg)](https://david-dm.org/TechQuery/Puppeteer-IE)
+**[ Notice ]**  [Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) isn't supported by this package as it utilizes [ActiveX](https://msdn.microsoft.com/en-us/library/windows/desktop/ms693753(v=vs.85).aspx), whereas [Edge uses the WebDriver protocol for automation](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/).
 
 [![NPM](https://nodei.co/npm/puppeteer-ie.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/puppeteer-ie/)
 
@@ -28,6 +28,9 @@ npm install --global --production windows-build-tools
 Only change the Package Name, and then do as [Puppeteer does](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md).
 
 **[ Recommendation ]**  Use [DayDream](https://github.com/segmentio/daydream) to record operation scripts in [Google Chrome](https://www.google.com/chrome/).
+
+**API document** accesses from https://techquery.github.io/Puppeteer-IE/ or `npm run help`.
+
 
 
 ## Acknowledgement

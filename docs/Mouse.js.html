@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Global - Documentation</title>
+    <title>Mouse.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -80,144 +80,138 @@
 
     <div id="main">
 
-        <h1 class="page-title">Global</h1>
+        <h1 class="page-title">Mouse.js</h1>
 
         <section>
-
-            <header>
-
-                <h2>
-
-                </h2>
-
-            </header>
-
             <article>
-                <div class="container-overview">
+                <pre class="prettyprint source linenums"><code>'use strict';
 
-                    <dl class="details">
+const Utility = require('./utility');
 
-                    </dl>
 
-                </div>
+class Mouse {
+    /**
+     * @constructs
+     *
+     * @param {Page} page - The page which this mouse cursor points to
+     */
+    constructor(page) {
 
-                <h3 class="subsection-title">Type Definitions</h3>
+        this._page = page;
 
-                <h4 class="name" id="EventEmitter">EventEmitter</h4>
+        this._x = this._y =  0;
 
-                <dl class="details">
+        this._button = 'none';
+    }
 
-                    <dt class="tag-source">Source:</dt>
-                    <dd class="tag-source">
-                        <ul class="dummy">
-                            <li>
-                                <a href="index.js.html">index.js</a>, <a href="index.js.html#line20">line 20</a>
-                            </li>
-                        </ul>
-                    </dd>
+    static makeEvent(options) {
 
-                    <dt class="tag-see">See:</dt>
-                    <dd class="tag-see">
-                        <ul>
-                            <li><a href="https://nodejs.org/dist/latest-v6.x/docs/api/events.html#events_class_eventemitter">Node.JS - Event module</a></li>
-                        </ul>
-                    </dd>
+        return {
+            detail:    options.clickCount,
+            button:    ['left', 'middle', 'right'].indexOf( options.button )
+        };
+    }
 
-                </dl>
+    async moveTo(x, y) {
 
-                <div class="description">
-                    <p>Event emitter</p>
-                </div>
+        const page = this._page, last = [this._x, this._y], next = [x, y];
 
-                <h5>Type:</h5>
-                <ul>
-                    <li>
+        if (! await page.isSameElement(last, next)) {
 
-                        <span class="param-type"><a href="global.html#EventEmitter">EventEmitter</a></span>
+            await page.trigger(last, 'MouseEvent', 'mouseout', true, true);
 
-                    </li>
-                </ul>
+            await page.trigger(last, 'MouseEvent', 'mouseleave', false, false);
 
-                <h4 class="name" id="Promise">Promise</h4>
+            await page.trigger(next, 'MouseEvent', 'mouseover', true, true);
 
-                <dl class="details">
+            await page.trigger(next, 'MouseEvent', 'mouseenter', false, false);
+        }
 
-                    <dt class="tag-source">Source:</dt>
-                    <dd class="tag-source">
-                        <ul class="dummy">
-                            <li>
-                                <a href="index.js.html">index.js</a>, <a href="index.js.html#line12">line 12</a>
-                            </li>
-                        </ul>
-                    </dd>
+        await page.trigger(next, 'MouseEvent', 'mousemove', true, true);
 
-                    <dt class="tag-see">See:</dt>
-                    <dd class="tag-see">
-                        <ul>
-                            <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></li>
-                        </ul>
-                    </dd>
+        this._x = x,  this._y = y;
+    }
 
-                </dl>
+    /**
+     * Dispatches a `mousemove` event
+     *
+     * @param {number} x
+     * @param {number} y
+     * @param {object} [options]
+     * @param {number} options.steps=1 - Sends intermediate `mousemove` events
+     *
+     * @return {Promise}
+     */
+    async move(x,  y,  options = {steps: 1}) {
 
-                <div class="description">
-                    <p>A proxy of the return value in the future</p>
-                </div>
+        const delta = {
+            x:    (x - this._x)  /  options.steps,
+            y:    (y - this._y)  /  options.steps
+        };
 
-                <h5>Type:</h5>
-                <ul>
-                    <li>
+        for (let i = 1;  i &lt;= options.steps;  i++)
+            await this.moveTo(this._x + delta.x,  this._y + delta.y);
+    }
 
-                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+    /**
+     * Dispatches a `mousedown` event
+     *
+     * @param {object} [options]
+     * @param {string} [options.button='left'] `left`, `right`, or `middle`
+     * @param {number} [options.clickCount=1]  {@link https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail|UIEvent.detail}
+     *
+     * @return {Promise}
+     */
+    down(options = {button: 'left', clickCount: 1}) {
 
-                    </li>
-                </ul>
+        return  this._page.trigger(
+            [this._x, this._y],
+            'MouseEvent',  'mousedown',  true,  true,
+            Mouse.makeEvent( options )
+        );
+    }
 
-                <h4 class="name" id="Serializable">Serializable</h4>
+    /**
+     * Dispatches a `mouseup` event
+     *
+     * @param {object} [options]
+     * @param {string} [options.button='left'] `left`, `right`, or `middle`
+     * @param {number} [options.clickCount=1]  {@link https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail|UIEvent.detail}
+     *
+     * @return {Promise}
+     */
+    up(options = {button: 'left', clickCount: 1}) {
 
-                <dl class="details">
+        return  this._page.trigger(
+            [this._x, this._y],
+            'MouseEvent',  'mouseup',  true,  true,
+            Mouse.makeEvent( options )
+        );
+    }
 
-                    <dt class="tag-source">Source:</dt>
-                    <dd class="tag-source">
-                        <ul class="dummy">
-                            <li>
-                                <a href="index.js.html">index.js</a>, <a href="index.js.html#line3">line 3</a>
-                            </li>
-                        </ul>
-                    </dd>
+    /**
+     * @param {object} [options]
+     * @param {string} [options.button='left'] `left`, `right`, or `middle`
+     * @param {number} [options.clickCount=1]  {@link https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail|UIEvent.detail}
+     * @param {number} [options.delay=0]       Time to wait between `mousedown` and `mouseup` in milliseconds
+     *
+     * @return {Promise}
+     */
+    async click(x,  y,  options = {button: 'left', clickCount: 1, delay: 0}) {
 
-                    <dt class="tag-see">See:</dt>
-                    <dd class="tag-see">
-                        <ul>
-                            <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description">Promise</a></li>
-                        </ul>
-                    </dd>
+        await this.move(x, y);
 
-                </dl>
+        await this.down( options );
 
-                <div class="description">
-                    <p>Serializable value</p>
-                </div>
+        if ( options.delay )  await Utility.waitFor( options.delay );
 
-                <h5>Type:</h5>
-                <ul>
-                    <li>
+        await this.up( options );
+    }
+}
 
-                        <span class="param-type">number</span> |
-
-                        <span class="param-type">boolean</span> |
-
-                        <span class="param-type">string</span> |
-
-                        <span class="param-type">object</span> |
-
-                        <span class="param-type">array</span>
-
-                    </li>
-                </ul>
-
+module.exports = Mouse;
+</code></pre>
             </article>
-
         </section>
 
     </div>

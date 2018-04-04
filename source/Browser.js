@@ -38,6 +38,8 @@ class Browser extends EventEmitter {
      */
     close() {
 
+        if ( arguments[0] )  console.warn( arguments[0] );
+
         return  Promise.all([... this._page].map(()  =>  this._page.shift().close()));
     }
 

@@ -35,6 +35,14 @@
                     <li data-type='method'><a href="Browser.html#userAgent">userAgent</a></li>
                 </ul>
             </li>
+            <li><a href="Mouse.html">Mouse</a>
+                <ul class='methods'>
+                    <li data-type='method'><a href="Mouse.html#click">click</a></li>
+                    <li data-type='method'><a href="Mouse.html#down">down</a></li>
+                    <li data-type='method'><a href="Mouse.html#move">move</a></li>
+                    <li data-type='method'><a href="Mouse.html#up">up</a></li>
+                </ul>
+            </li>
             <li><a href="Page.html">Page</a>
                 <ul class='methods'>
                     <li data-type='method'><a href="Page.html#$">$</a></li>
@@ -49,6 +57,7 @@
                     <li data-type='method'><a href="Page.html#goBack">goBack</a></li>
                     <li data-type='method'><a href="Page.html#goForward">goForward</a></li>
                     <li data-type='method'><a href="Page.html#goto">goto</a></li>
+                    <li data-type='method'><a href="Page.html#hover">hover</a></li>
                     <li data-type='method'><a href="Page.html#reload">reload</a></li>
                     <li data-type='method'><a href="Page.html#setContent">setContent</a></li>
                     <li data-type='method'><a href="Page.html#setViewport">setViewport</a></li>
@@ -75,16 +84,18 @@
             <article>
                 <h1>Puppeteer-IE</h1>
                 <p>Headless <strong>Internet Explorer</strong> NodeJS API inspired by <a href="https://github.com/GoogleChrome/puppeteer">Puppeteer</a>.</p>
-                <p><a href="https://david-dm.org/TechQuery/Puppeteer-IE"><img src="https://david-dm.org/TechQuery/Puppeteer-IE.svg" alt="NPM Dependency"></a></p>
+                <p><strong>[ Notice ]</strong> <a href="https://www.microsoft.com/en-us/windows/microsoft-edge">Microsoft Edge</a> isn't supported by this package as it utilizes <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms693753(v=vs.85">ActiveX</a>.aspx),
+                    whereas <a href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/">Edge uses the WebDriver protocol for automation</a>.</p>
                 <p><a href="https://nodei.co/npm/puppeteer-ie/"><img src="https://nodei.co/npm/puppeteer-ie.png?downloads=true&amp;downloadRank=true&amp;stars=true" alt="NPM"></a></p>
                 <h2>Installation</h2>
-                <pre class="prettyprint source lang-Shell"><code>npm install</code></pre>
+                <pre class="prettyprint source lang-Shell"><code>npm install puppeteer-ie</code></pre>
                 <p><strong>[ Notice ]</strong> If you get some error at installing, try to execute the command below:</p>
                 <pre class="prettyprint source lang-Shell"><code>npm install --global --production windows-build-tools</code></pre>
                 <p>(<a href="https://github.com/nodejs/node-gyp#option-1">More about this</a>)</p>
                 <h2>Usage</h2>
                 <p>Only change the Package Name, and then do as <a href="https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md">Puppeteer does</a>.</p>
                 <p><strong>[ Recommendation ]</strong> Use <a href="https://github.com/segmentio/daydream">DayDream</a> to record operation scripts in <a href="https://www.google.com/chrome/">Google Chrome</a>.</p>
+                <p><strong>API document</strong> accesses from https://techquery.github.io/Puppeteer-IE/ or <code>npm run help</code>.</p>
                 <h2>Acknowledgement</h2>
                 <ol>
                     <li>

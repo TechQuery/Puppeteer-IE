@@ -35,6 +35,14 @@
                     <li data-type='method'><a href="Browser.html#userAgent">userAgent</a></li>
                 </ul>
             </li>
+            <li><a href="Mouse.html">Mouse</a>
+                <ul class='methods'>
+                    <li data-type='method'><a href="Mouse.html#click">click</a></li>
+                    <li data-type='method'><a href="Mouse.html#down">down</a></li>
+                    <li data-type='method'><a href="Mouse.html#move">move</a></li>
+                    <li data-type='method'><a href="Mouse.html#up">up</a></li>
+                </ul>
+            </li>
             <li><a href="Page.html">Page</a>
                 <ul class='methods'>
                     <li data-type='method'><a href="Page.html#$">$</a></li>
@@ -49,6 +57,7 @@
                     <li data-type='method'><a href="Page.html#goBack">goBack</a></li>
                     <li data-type='method'><a href="Page.html#goForward">goForward</a></li>
                     <li data-type='method'><a href="Page.html#goto">goto</a></li>
+                    <li data-type='method'><a href="Page.html#hover">hover</a></li>
                     <li data-type='method'><a href="Page.html#reload">reload</a></li>
                     <li data-type='method'><a href="Page.html#setContent">setContent</a></li>
                     <li data-type='method'><a href="Page.html#setViewport">setViewport</a></li>
@@ -114,6 +123,8 @@ class Browser extends EventEmitter {
      * @return {Promise}
      */
     close() {
+
+        if ( arguments[0] )  console.warn( arguments[0] );
 
         return  Promise.all([... this._page].map(()  =>  this._page.shift().close()));
     }

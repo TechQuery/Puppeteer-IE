@@ -4,7 +4,9 @@ require('should');
 
 const Browser = require('../source/Browser');
 
-const browser = new Browser( false );
+const browser = new Browser(
+    process.env.npm_config_argv.indexOf('--inspect')  <  0
+);
 
 const exit = browser.close.bind( browser );
 
