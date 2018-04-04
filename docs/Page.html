@@ -27,10 +27,41 @@
         <h2><a href="index.html">Home</a></h2>
         <h3>Classes</h3>
         <ul>
-            <li><a href="Browser.html">Browser</a></li>
-            <li><a href="Page.html">Page</a></li>
+            <li><a href="Browser.html">Browser</a>
+                <ul class='methods'>
+                    <li data-type='method'><a href="Browser.html#close">close</a></li>
+                    <li data-type='method'><a href="Browser.html#newPage">newPage</a></li>
+                    <li data-type='method'><a href="Browser.html#pages">pages</a></li>
+                    <li data-type='method'><a href="Browser.html#userAgent">userAgent</a></li>
+                </ul>
+            </li>
+            <li><a href="Page.html">Page</a>
+                <ul class='methods'>
+                    <li data-type='method'><a href="Page.html#$">$</a></li>
+                    <li data-type='method'><a href="Page.html#$$">$$</a></li>
+                    <li data-type='method'><a href="Page.html#addScriptTag">addScriptTag</a></li>
+                    <li data-type='method'><a href="Page.html#addStyleTag">addStyleTag</a></li>
+                    <li data-type='method'><a href="Page.html#click">click</a></li>
+                    <li data-type='method'><a href="Page.html#close">close</a></li>
+                    <li data-type='method'><a href="Page.html#content">content</a></li>
+                    <li data-type='method'><a href="Page.html#evaluate">evaluate</a></li>
+                    <li data-type='method'><a href="Page.html#focus">focus</a></li>
+                    <li data-type='method'><a href="Page.html#goBack">goBack</a></li>
+                    <li data-type='method'><a href="Page.html#goForward">goForward</a></li>
+                    <li data-type='method'><a href="Page.html#goto">goto</a></li>
+                    <li data-type='method'><a href="Page.html#reload">reload</a></li>
+                    <li data-type='method'><a href="Page.html#setContent">setContent</a></li>
+                    <li data-type='method'><a href="Page.html#setViewport">setViewport</a></li>
+                    <li data-type='method'><a href="Page.html#title">title</a></li>
+                    <li data-type='method'><a href="Page.html#url">url</a></li>
+                    <li data-type='method'><a href="Page.html#viewport">viewport</a></li>
+                    <li data-type='method'><a href="Page.html#waitForNavigation">waitForNavigation</a></li>
+                    <li data-type='method'><a href="Page.html#waitForSelector">waitForSelector</a></li>
+                </ul>
+            </li>
             <li><a href="Puppeteer.html">Puppeteer</a>
                 <ul class='methods'>
+                    <li data-type='method'><a href="Puppeteer.html#.executablePath">executablePath</a></li>
                     <li data-type='method'><a href="Puppeteer.html#.launch">launch</a></li>
                 </ul>
             </li>
@@ -51,7 +82,7 @@
                 </h2>
 
                 <div class="class-description">
-                    <p>Web page</p>
+                    <p>Page provides methods to interact with a single tab in Internet Explorer.<br>One Browser instance might have multiple Page instances.</p>
                 </div>
 
             </header>
@@ -69,7 +100,7 @@
                         <dd class="tag-source">
                             <ul class="dummy">
                                 <li>
-                                    <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line12">line 12</a>
+                                    <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line15">line 15</a>
                                 </li>
                             </ul>
                         </dd>
@@ -83,6 +114,1883 @@
                 <ul>
                     <li><a href="global.html#EventEmitter">EventEmitter</a></li>
                 </ul>
+
+                <h3 class="subsection-title">Methods</h3>
+
+                <h4 class="name" id="$"><span class="type-signature">(async) </span>$<span class="signature">(selector)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>.&lt;?ElementHandle>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line210">line 210</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>The method runs <code>document.querySelector()</code> within the page.<br>If no element matches the selector, the return value resolve to <code>null</code>.</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>selector</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">string</span>
+
+                            </td>
+
+                            <td class="description last">
+                                <p>A selector to query page for</p>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a>.&lt;?ElementHandle></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="$$"><span class="type-signature">(async) </span>$$<span class="signature">(selector)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>.&lt;Array.&lt;ElementHandle>>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line223">line 223</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>The method runs <code>document.querySelectorAll()</code> within the page.<br>If no elements match the selector, the return value resolve to <code>[ ]</code>.</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>selector</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">string</span>
+
+                            </td>
+
+                            <td class="description last">
+                                <p>A selector to query page for</p>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a>.&lt;Array.&lt;ElementHandle>></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="addScriptTag"><span class="type-signature">(async) </span>addScriptTag<span class="signature">(options)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line369">line 369</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>Adds a <code>&lt;script&gt;</code> tag into the page with the desired url or content</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>options</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">object</span>
+
+                            </td>
+
+                            <td class="description last">
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>path</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Path to the JavaScript file to be injected into frame.<br> If path is a relative path, then it is resolved relative to current working directory.</p>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>url</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>URL of a script to be added</p>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>content</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Raw JavaScript content to be injected into frame</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <div class="param-desc">
+                    <p>which resolves to the added tag when the script's onload fires<br> or when the script content was injected into frame</p>
+                </div>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="addStyleTag"><span class="type-signature">(async) </span>addStyleTag<span class="signature">(options)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line338">line 338</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>Adds a <code>&lt;link rel=&quot;stylesheet&quot;&gt;</code> tag into the page with the desired url or a <code>&lt;style type=&quot;text/css&quot;&gt;</code> tag with the content</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>options</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">object</span>
+
+                            </td>
+
+                            <td class="description last">
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>path</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Path to the CSS file to be injected into frame.<br> If path is a relative path, then it is resolved relative to current working directory.</p>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>url</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>URL of the
+                                                    <link> tag</p>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>content</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Raw CSS content to be injected into frame</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <div class="param-desc">
+                    <p>which resolves to the added tag when the stylesheet's onload fires<br> or when the CSS content was injected into frame</p>
+                </div>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="click"><span class="type-signature">(async) </span>click<span class="signature">(selector)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line405">line 405</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>This method fetches an element with selector, scrolls it into view if needed,<br>and then uses <code>page.mouse</code> to click in the center of the element.<br>If there's no element matching selector, the method throws an error.</p>
+                    <p>Bare in mind that if <code>.click()</code> triggers a navigation event<br>and there's a separate <code>page.waitForNavigation()</code> promise to be resolved,<br>you may end up with a race condition that yields unexpected results.</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>selector</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">string</span>
+
+                            </td>
+
+                            <td class="description last">
+                                <p>A selector to search for element to click.<br> If there are multiple elements satisfying the selector,<br> the first will be clicked.</p>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <div class="param-desc">
+                    <p>Promise which resolves when the element matching selector is successfully clicked.<br> The Promise will be rejected if there is no element matching selector.</p>
+                </div>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="close"><span class="type-signature">(async) </span>close<span class="signature">()</span><span class="type-signature"></span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line161">line 161</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Fires:</h5>
+                <ul>
+                    <li>Page#event:close</li>
+                </ul>
+
+                <h4 class="name" id="content"><span class="type-signature">(async) </span>content<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>.&lt;string>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line175">line 175</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>Gets the full HTML contents of the page, including the doctype.</p>
+                </div>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a>.&lt;string></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="evaluate"><span class="type-signature">(async) </span>evaluate<span class="signature">(expression, &hellip;parameter)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>.&lt;<a href="global.html#Serializable">Serializable</a>>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line258">line 258</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th>Attributes</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>expression</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">function</span> |
+
+                                <span class="param-type">string</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                            </td>
+
+                            <td class="description last">
+                                <p>Function or Expression to be evaluated in the page context</p>
+                            </td>
+                        </tr>
+
+                        <tr>
+
+                            <td class="name"><code>parameter</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type"><a href="global.html#Serializable">Serializable</a></span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                                &lt;repeatable><br>
+
+                            </td>
+
+                            <td class="description last">
+                                <p>Arguments to pass to the function</p>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <div class="param-desc">
+                    <p>Promise which resolves to the value of <code>expression</code></p>
+                </div>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a>.&lt;<a href="global.html#Serializable">Serializable</a>></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="focus"><span class="type-signature">(async) </span>focus<span class="signature">(selector)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line424">line 424</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>This method fetches an element with selector and focuses it.<br>If there's no element matching selector, the method throws an error.</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>selector</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">string</span>
+
+                            </td>
+
+                            <td class="description last">
+                                <p>A selector of an element to focus.<br> If there are multiple elements satisfying the selector,<br> the first will be focused.</p>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <div class="param-desc">
+                    <p>Promise which resolves when the element matching selector is successfully focused.<br> The promise will be rejected if there is no element matching selector.</p>
+                </div>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="goBack"><span class="type-signature"></span>goBack<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line121">line 121</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>Navigate to the previous page in history</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th>Attributes</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>options</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">object</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                                &lt;optional><br>
+
+                            </td>
+
+                            <td class="description last">
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th>Default</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>timeout</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="default">
+
+                                                <code>30000</code>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Maximum navigation time in milliseconds, pass 0 to disable timeout.</p>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>waitUntil</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="default">
+
+                                                <code>'load'</code>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>When to consider navigation succeeded</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="goForward"><span class="type-signature"></span>goForward<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line137">line 137</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>Navigate to the next page in history</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th>Attributes</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>options</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">object</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                                &lt;optional><br>
+
+                            </td>
+
+                            <td class="description last">
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th>Default</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>timeout</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="default">
+
+                                                <code>30000</code>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Maximum navigation time in milliseconds, pass 0 to disable timeout.</p>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>waitUntil</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="default">
+
+                                                <code>'load'</code>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>When to consider navigation succeeded</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="goto"><span class="type-signature"></span>goto<span class="signature">(url<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line105">line 105</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th>Attributes</th>
+
+                            <th>Default</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>url</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">string</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                                &lt;optional><br>
+
+                            </td>
+
+                            <td class="default">
+
+                                <code>'about:blank'</code>
+
+                            </td>
+
+                            <td class="description last">
+                                <p>URL to navigate page to. The url should include scheme, e.g. https://.</p>
+                            </td>
+                        </tr>
+
+                        <tr>
+
+                            <td class="name"><code>options</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">object</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                                &lt;optional><br>
+
+                            </td>
+
+                            <td class="default">
+
+                            </td>
+
+                            <td class="description last">
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th>Default</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>timeout</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="default">
+
+                                                <code>30000</code>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Maximum navigation time in milliseconds, pass 0 to disable timeout.</p>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>waitUntil</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="default">
+
+                                                <code>'load'</code>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>When to consider navigation succeeded</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="reload"><span class="type-signature"></span>reload<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line151">line 151</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th>Attributes</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>options</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">object</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                                &lt;optional><br>
+
+                            </td>
+
+                            <td class="description last">
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th>Default</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>timeout</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="default">
+
+                                                <code>30000</code>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Maximum navigation time in milliseconds, pass 0 to disable timeout.</p>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>waitUntil</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="default">
+
+                                                <code>'load'</code>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>When to consider navigation succeeded</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="setContent"><span class="type-signature">(async) </span>setContent<span class="signature">(HTML)</span><span class="type-signature"></span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line193">line 193</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>HTML</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">string</span>
+
+                            </td>
+
+                            <td class="description last">
+                                <p>HTML markup to assign to the page</p>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h4 class="name" id="setViewport"><span class="type-signature"></span>setViewport<span class="signature">(viewport)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line293">line 293</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>In the case of multiple pages in a single browser, each page can have its own viewport size</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>viewport</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">object</span>
+
+                            </td>
+
+                            <td class="description last">
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>width</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>page width in pixels</p>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>height</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>page height in pixels</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="title"><span class="type-signature">(async) </span>title<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>.&lt;string>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line76">line 76</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a>.&lt;string></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="url"><span class="type-signature"></span>url<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line68">line 68</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type">string</span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="viewport"><span class="type-signature">(async) </span>viewport<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>.&lt;object>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line307">line 307</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Returns:</h5>
+
+                <div class="param-desc">
+                    <p>Include keys of <code>width</code>, <code>height</code>, <code>deviceScaleFactor</code>, <code>isMobile</code>, <code>hasTouch</code> &amp; <code>isLandscape</code></p>
+                </div>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a>.&lt;object></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="waitForNavigation"><span class="type-signature">(async) </span>waitForNavigation<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line87">line 87</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th>Attributes</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>options</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">object</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                                &lt;optional><br>
+
+                            </td>
+
+                            <td class="description last">
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th>Default</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>timeout</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="default">
+
+                                                <code>30000</code>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Maximum navigation time in milliseconds, pass 0 to disable timeout.</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Fires:</h5>
+                <ul>
+                    <li>Page#event:load</li>
+                </ul>
+
+                <h4 class="name" id="waitForSelector"><span class="type-signature"></span>waitForSelector<span class="signature">(selector, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>.&lt;ElementHandle>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line247">line 247</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>Wait for the selector to appear in page.</p>
+                    <p>If at the moment of calling the method the selector already exists, the method will return immediately.<br>If the selector doesn't appear after the timeout milliseconds of waiting, the function will throw.</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th>Attributes</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>selector</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">string</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                            </td>
+
+                            <td class="description last">
+                                <p>A selector of an element to wait for</p>
+                            </td>
+                        </tr>
+
+                        <tr>
+
+                            <td class="name"><code>options</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">object</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                                &lt;optional><br>
+
+                            </td>
+
+                            <td class="description last">
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th>Default</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>timeout</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="default">
+
+                                                <code>30000</code>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Maximum time to wait for in milliseconds, pass 0 to disable timeout.</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <div class="param-desc">
+                    <p>Promise which resolves when element specified by selector string is added to DOM</p>
+                </div>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a>.&lt;ElementHandle></span>
+
+                    </dd>
+                </dl>
 
             </article>
 

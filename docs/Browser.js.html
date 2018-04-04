@@ -27,10 +27,41 @@
         <h2><a href="index.html">Home</a></h2>
         <h3>Classes</h3>
         <ul>
-            <li><a href="Browser.html">Browser</a></li>
-            <li><a href="Page.html">Page</a></li>
+            <li><a href="Browser.html">Browser</a>
+                <ul class='methods'>
+                    <li data-type='method'><a href="Browser.html#close">close</a></li>
+                    <li data-type='method'><a href="Browser.html#newPage">newPage</a></li>
+                    <li data-type='method'><a href="Browser.html#pages">pages</a></li>
+                    <li data-type='method'><a href="Browser.html#userAgent">userAgent</a></li>
+                </ul>
+            </li>
+            <li><a href="Page.html">Page</a>
+                <ul class='methods'>
+                    <li data-type='method'><a href="Page.html#$">$</a></li>
+                    <li data-type='method'><a href="Page.html#$$">$$</a></li>
+                    <li data-type='method'><a href="Page.html#addScriptTag">addScriptTag</a></li>
+                    <li data-type='method'><a href="Page.html#addStyleTag">addStyleTag</a></li>
+                    <li data-type='method'><a href="Page.html#click">click</a></li>
+                    <li data-type='method'><a href="Page.html#close">close</a></li>
+                    <li data-type='method'><a href="Page.html#content">content</a></li>
+                    <li data-type='method'><a href="Page.html#evaluate">evaluate</a></li>
+                    <li data-type='method'><a href="Page.html#focus">focus</a></li>
+                    <li data-type='method'><a href="Page.html#goBack">goBack</a></li>
+                    <li data-type='method'><a href="Page.html#goForward">goForward</a></li>
+                    <li data-type='method'><a href="Page.html#goto">goto</a></li>
+                    <li data-type='method'><a href="Page.html#reload">reload</a></li>
+                    <li data-type='method'><a href="Page.html#setContent">setContent</a></li>
+                    <li data-type='method'><a href="Page.html#setViewport">setViewport</a></li>
+                    <li data-type='method'><a href="Page.html#title">title</a></li>
+                    <li data-type='method'><a href="Page.html#url">url</a></li>
+                    <li data-type='method'><a href="Page.html#viewport">viewport</a></li>
+                    <li data-type='method'><a href="Page.html#waitForNavigation">waitForNavigation</a></li>
+                    <li data-type='method'><a href="Page.html#waitForSelector">waitForSelector</a></li>
+                </ul>
+            </li>
             <li><a href="Puppeteer.html">Puppeteer</a>
                 <ul class='methods'>
+                    <li data-type='method'><a href="Puppeteer.html#.executablePath">executablePath</a></li>
                     <li data-type='method'><a href="Puppeteer.html#.launch">launch</a></li>
                 </ul>
             </li>
@@ -50,10 +81,10 @@ const EventEmitter = require('events'), Page = require('./Page');
 
 
 /**
- * Web browser
+ * A Browser is created when Puppeteer connects to a Internet Explorer instance
  *
  * @class
- * @extends {EventEmitter}
+ * @extends EventEmitter
  */
 class Browser extends EventEmitter {
 
@@ -64,28 +95,40 @@ class Browser extends EventEmitter {
         this._page = [ ];
     }
 
+    /**
+     * @return {Promise&lt;Page>}
+     */
     async newPage() {
 
-        const page = new Page();
+        const page = new Page( this.headless );
 
         this._page.push( page );
 
         return page;
     }
 
+    /**
+     * Closes Internet Explorer and all of its pages (if any were opened).
+     * The Browser object itself is considered to be disposed and cannot be used anymore.
+     *
+     * @return {Promise}
+     */
     close() {
 
-        return  Promise.all(this._page.map(function (page) {
-
-            return page.close();
-        }));
+        return  Promise.all([... this._page].map(()  =>  this._page.shift().close()));
     }
 
+    /**
+     * @return {Promise&lt;Array&lt;Page>>} Promise which resolves to an array of all open pages
+     */
     async pages() {
 
         return  this._page;
     }
 
+    /**
+     * @return {Promise&lt;string>} Promise which resolves to the browser's original user agent
+     */
     async userAgent() {
 
         return  this._page[0].window.navigator.userAgent;

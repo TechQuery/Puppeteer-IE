@@ -27,10 +27,41 @@
         <h2><a href="index.html">Home</a></h2>
         <h3>Classes</h3>
         <ul>
-            <li><a href="Browser.html">Browser</a></li>
-            <li><a href="Page.html">Page</a></li>
+            <li><a href="Browser.html">Browser</a>
+                <ul class='methods'>
+                    <li data-type='method'><a href="Browser.html#close">close</a></li>
+                    <li data-type='method'><a href="Browser.html#newPage">newPage</a></li>
+                    <li data-type='method'><a href="Browser.html#pages">pages</a></li>
+                    <li data-type='method'><a href="Browser.html#userAgent">userAgent</a></li>
+                </ul>
+            </li>
+            <li><a href="Page.html">Page</a>
+                <ul class='methods'>
+                    <li data-type='method'><a href="Page.html#$">$</a></li>
+                    <li data-type='method'><a href="Page.html#$$">$$</a></li>
+                    <li data-type='method'><a href="Page.html#addScriptTag">addScriptTag</a></li>
+                    <li data-type='method'><a href="Page.html#addStyleTag">addStyleTag</a></li>
+                    <li data-type='method'><a href="Page.html#click">click</a></li>
+                    <li data-type='method'><a href="Page.html#close">close</a></li>
+                    <li data-type='method'><a href="Page.html#content">content</a></li>
+                    <li data-type='method'><a href="Page.html#evaluate">evaluate</a></li>
+                    <li data-type='method'><a href="Page.html#focus">focus</a></li>
+                    <li data-type='method'><a href="Page.html#goBack">goBack</a></li>
+                    <li data-type='method'><a href="Page.html#goForward">goForward</a></li>
+                    <li data-type='method'><a href="Page.html#goto">goto</a></li>
+                    <li data-type='method'><a href="Page.html#reload">reload</a></li>
+                    <li data-type='method'><a href="Page.html#setContent">setContent</a></li>
+                    <li data-type='method'><a href="Page.html#setViewport">setViewport</a></li>
+                    <li data-type='method'><a href="Page.html#title">title</a></li>
+                    <li data-type='method'><a href="Page.html#url">url</a></li>
+                    <li data-type='method'><a href="Page.html#viewport">viewport</a></li>
+                    <li data-type='method'><a href="Page.html#waitForNavigation">waitForNavigation</a></li>
+                    <li data-type='method'><a href="Page.html#waitForSelector">waitForSelector</a></li>
+                </ul>
+            </li>
             <li><a href="Puppeteer.html">Puppeteer</a>
                 <ul class='methods'>
+                    <li data-type='method'><a href="Puppeteer.html#.executablePath">executablePath</a></li>
                     <li data-type='method'><a href="Puppeteer.html#.launch">launch</a></li>
                 </ul>
             </li>
@@ -69,7 +100,7 @@
                         <dd class="tag-source">
                             <ul class="dummy">
                                 <li>
-                                    <a href="index.js.html">index.js</a>, <a href="index.js.html#line19">line 19</a>
+                                    <a href="index.js.html">index.js</a>, <a href="index.js.html#line36">line 36</a>
                                 </li>
                             </ul>
                         </dd>
@@ -84,7 +115,7 @@
 
                 <h3 class="subsection-title">Methods</h3>
 
-                <h4 class="name" id=".launch"><span class="type-signature">(async, static) </span>launch<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="Browser.html">Browser</a>>}</span></h4>
+                <h4 class="name" id=".executablePath"><span class="type-signature">(static) </span>executablePath<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
 
                 <dl class="details">
 
@@ -92,7 +123,39 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="index.js.html">index.js</a>, <a href="index.js.html#line29">line 29</a>
+                                <a href="index.js.html">index.js</a>, <a href="index.js.html#line54">line 54</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Returns:</h5>
+
+                <div class="param-desc">
+                    <p>A path where Puppeteer expects to find Internet Explorer</p>
+                </div>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type">string</span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id=".launch"><span class="type-signature">(async, static) </span>launch<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>.&lt;<a href="Browser.html">Browser</a>>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="index.js.html">index.js</a>, <a href="index.js.html#line46">line 46</a>
                             </li>
                         </ul>
                     </dd>
@@ -100,7 +163,7 @@
                 </dl>
 
                 <div class="description">
-                    <p>Launch a Browser</p>
+                    <p>Launch a browser instance with given arguments.<br>The browser will be closed when the parent NodeJS process is closed.</p>
                 </div>
 
                 <h5>Parameters:</h5>
@@ -137,7 +200,59 @@
 
                             </td>
 
-                            <td class="description last"></td>
+                            <td class="description last">
+                                <p>Set of configurable options to set on the browser</p>
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th>Default</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>headless</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">boolean</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="default">
+
+                                                <code>true</code>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Whether to run browser in headless mode</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
                         </tr>
 
                     </tbody>
@@ -151,7 +266,7 @@
     </dt>
                     <dd>
 
-                        <span class="param-type">Promise.&lt;<a href="Browser.html">Browser</a>></span>
+                        <span class="param-type"><a href="global.html#Promise">Promise</a>.&lt;<a href="Browser.html">Browser</a>></span>
 
                     </dd>
                 </dl>

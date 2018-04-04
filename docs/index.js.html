@@ -27,10 +27,41 @@
         <h2><a href="index.html">Home</a></h2>
         <h3>Classes</h3>
         <ul>
-            <li><a href="Browser.html">Browser</a></li>
-            <li><a href="Page.html">Page</a></li>
+            <li><a href="Browser.html">Browser</a>
+                <ul class='methods'>
+                    <li data-type='method'><a href="Browser.html#close">close</a></li>
+                    <li data-type='method'><a href="Browser.html#newPage">newPage</a></li>
+                    <li data-type='method'><a href="Browser.html#pages">pages</a></li>
+                    <li data-type='method'><a href="Browser.html#userAgent">userAgent</a></li>
+                </ul>
+            </li>
+            <li><a href="Page.html">Page</a>
+                <ul class='methods'>
+                    <li data-type='method'><a href="Page.html#$">$</a></li>
+                    <li data-type='method'><a href="Page.html#$$">$$</a></li>
+                    <li data-type='method'><a href="Page.html#addScriptTag">addScriptTag</a></li>
+                    <li data-type='method'><a href="Page.html#addStyleTag">addStyleTag</a></li>
+                    <li data-type='method'><a href="Page.html#click">click</a></li>
+                    <li data-type='method'><a href="Page.html#close">close</a></li>
+                    <li data-type='method'><a href="Page.html#content">content</a></li>
+                    <li data-type='method'><a href="Page.html#evaluate">evaluate</a></li>
+                    <li data-type='method'><a href="Page.html#focus">focus</a></li>
+                    <li data-type='method'><a href="Page.html#goBack">goBack</a></li>
+                    <li data-type='method'><a href="Page.html#goForward">goForward</a></li>
+                    <li data-type='method'><a href="Page.html#goto">goto</a></li>
+                    <li data-type='method'><a href="Page.html#reload">reload</a></li>
+                    <li data-type='method'><a href="Page.html#setContent">setContent</a></li>
+                    <li data-type='method'><a href="Page.html#setViewport">setViewport</a></li>
+                    <li data-type='method'><a href="Page.html#title">title</a></li>
+                    <li data-type='method'><a href="Page.html#url">url</a></li>
+                    <li data-type='method'><a href="Page.html#viewport">viewport</a></li>
+                    <li data-type='method'><a href="Page.html#waitForNavigation">waitForNavigation</a></li>
+                    <li data-type='method'><a href="Page.html#waitForSelector">waitForSelector</a></li>
+                </ul>
+            </li>
             <li><a href="Puppeteer.html">Puppeteer</a>
                 <ul class='methods'>
+                    <li data-type='method'><a href="Puppeteer.html#.executablePath">executablePath</a></li>
                     <li data-type='method'><a href="Puppeteer.html#.launch">launch</a></li>
                 </ul>
             </li>
@@ -45,6 +76,23 @@
         <section>
             <article>
                 <pre class="prettyprint source linenums"><code>'use strict';
+
+/**
+ * Serializable value
+ *
+ * @typedef {number|boolean|string|object|array} Serializable
+ *
+ * @see     {@link
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description|Promise}
+ */
+
+/**
+ * A proxy of the return value in the future
+ *
+ * @typedef {Promise} Promise
+ *
+ * @see     {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise|Promise}
+ */
 
 /**
  * Event emitter
@@ -64,19 +112,22 @@ const Browser = require('./Browser'), stack = [ ];
  */
 class Puppeteer {
     /**
-     * Launch a Browser
+     * Launch a browser instance with given arguments.
+     * The browser will be closed when the parent NodeJS process is closed.
      *
-     * @memberof Puppeteer
-     *
-     * @param {object} [options]
+     * @param {object}  [options]                 Set of configurable options to set on the browser
+     * @param {boolean} [options.headless = true] Whether to run browser in headless mode
      *
      * @return {Promise&lt;Browser>}
      */
-    static async launch(options = { }) {
+    static async launch({headless = true}) {
 
-        return  stack[stack.push(new Browser( options.headless )) - 1];
+        return  stack[stack.push(new Browser( headless )) - 1];
     }
 
+    /**
+     * @return {string} A path where Puppeteer expects to find Internet Explorer
+     */
     static executablePath() {
 
         const page = stack[0]  &amp;&amp;  stack[0]._page[0];
@@ -90,7 +141,14 @@ async function clear(error) {
 
     await Promise.all( stack.map(browser => browser.close()) );
 
-    throw error;
+    if (error instanceof Error) {
+
+        console.error( error );
+
+        process.exit(1);
+    }
+
+    process.exit(0);
 }
 
 for (let event  of  ['uncaughtException', 'unhandledRejection', 'SIGINT', 'exit'])

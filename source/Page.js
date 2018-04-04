@@ -6,10 +6,11 @@ const WinAX = require('winax');
 
 
 /**
- * Web page
+ * Page provides methods to interact with a single tab in Internet Explorer.
+ * One Browser instance might have multiple Page instances.
  *
  * @class
- * @extends {EventEmitter}
+ * @extends EventEmitter
  */
 class Page extends EventEmitter {
 
@@ -61,17 +62,29 @@ class Page extends EventEmitter {
 
     get window() {  return  Page.proxy( this.document.defaultView );  }
 
+    /**
+     * @return {string}
+     */
     url() {
 
         return  this._target.LocationURL + '';
     }
 
-    title() {
+    /**
+     * @return {Promise<string>}
+     */
+    async title() {
 
         return  this._target.LocationName + '';
     }
 
-    async waitForNavigation({ timeout }) {
+    /**
+     * @param {object} [options]
+     * @param {number} [options.timeout=30000] Maximum navigation time in milliseconds, pass 0 to disable timeout.
+     *
+     * @emits Page#load
+     */
+    async waitForNavigation({timeout = 30000}) {
 
         await Page.waitFor(
             ()  =>  this._target.Busy  &&  (this._target.Busy == false),
@@ -81,39 +94,70 @@ class Page extends EventEmitter {
         this.emit('load');
     }
 
-    waitForSelector(selector,  { timeout }) {
-
-        return  Page.waitFor(() => this.$( selector ),  timeout);
-    }
-
-    goto(url = 'about:blank') {
+    /**
+     * @param {string} [url='about:blank']        URL to navigate page to. The url should include scheme, e.g. https://.
+     * @param {object} [options]
+     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds, pass 0 to disable timeout.
+     * @param {number} [options.waitUntil='load'] When to consider navigation succeeded
+     *
+     * @return {Promise}
+     */
+    goto(url = 'about:blank',  options = {timeout: 30000, waitUntil: 'load'}) {
 
         this._target.Navigate( url );
 
-        return this.waitForNavigation();
+        return  this.waitForNavigation( options );
     }
 
-    async goBack() {
+    /**
+     * Navigate to the previous page in history
+     *
+     * @param {object} [options]
+     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds, pass 0 to disable timeout.
+     * @param {number} [options.waitUntil='load'] When to consider navigation succeeded
+     *
+     * @return {Promise}
+     */
+    goBack(options = {timeout: 30000, waitUntil: 'load'}) {
 
         this._target.GoBack();
 
-        return this.waitForNavigation();
+        return  this.waitForNavigation( options );
     }
 
-    async goForward() {
+    /**
+     * Navigate to the next page in history
+     *
+     * @param {object} [options]
+     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds, pass 0 to disable timeout.
+     * @param {number} [options.waitUntil='load'] When to consider navigation succeeded
+     *
+     * @return {Promise}
+     */
+    goForward(options = {timeout: 30000, waitUntil: 'load'}) {
 
         this._target.GoForward();
 
-        return this.waitForNavigation();
+        return  this.waitForNavigation( options );
     }
 
-    async reload() {
+    /**
+     * @param {object} [options]
+     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds, pass 0 to disable timeout.
+     * @param {number} [options.waitUntil='load'] When to consider navigation succeeded
+     *
+     * @return {Promise}
+     */
+    reload(options = {timeout: 30000, waitUntil: 'load'}) {
 
         this._target.Refresh();
 
-        return this.waitForNavigation();
+        return  this.waitForNavigation( options );
     }
 
+    /**
+     * @emits Page#close
+     */
     async close() {
 
         this._target.Quit();
@@ -123,6 +167,11 @@ class Page extends EventEmitter {
         this.emit('close');
     }
 
+    /**
+     * Gets the full HTML contents of the page, including the doctype.
+     *
+     * @return {Promise<string>}
+     */
     async content() {
 
         const DocType = this.document.doctype;
@@ -138,6 +187,9 @@ class Page extends EventEmitter {
         return `${type}>${this.document.documentElement.outerHTML}`;
     }
 
+    /**
+     * @param {string} HTML - HTML markup to assign to the page
+     */
     async setContent(HTML) {
 
         this.document.open();
@@ -147,12 +199,28 @@ class Page extends EventEmitter {
         this.document.close();
     }
 
-    async $(selector = '') {
+    /**
+     * The method runs `document.querySelector()` within the page.
+     * If no element matches the selector, the return value resolve to `null`.
+     *
+     * @param {string} selector - A selector to query page for
+     *
+     * @return {Promise<?ElementHandle>}
+     */
+    async $(selector) {
 
         return  Page.proxy( this.document.querySelector( selector ) );
     }
 
-    async $$(selector = '') {
+    /**
+     * The method runs `document.querySelectorAll()` within the page.
+     * If no elements match the selector, the return value resolve to `[ ]`.
+     *
+     * @param {string} selector - A selector to query page for
+     *
+     * @return {Promise<Array<ElementHandle>>}
+     */
+    async $$(selector) {
 
         const list = this.document.querySelectorAll( selector );
 
@@ -164,6 +232,29 @@ class Page extends EventEmitter {
         return result;
     }
 
+    /**
+     * Wait for the selector to appear in page.
+     *
+     * If at the moment of calling the method the selector already exists, the method will return immediately.
+     * If the selector doesn't appear after the timeout milliseconds of waiting, the function will throw.
+     *
+     * @param {string} selector                A selector of an element to wait for
+     * @param {object} [options]
+     * @param {number} [options.timeout=30000] Maximum time to wait for in milliseconds, pass 0 to disable timeout.
+     *
+     * @return {Promise<ElementHandle>} Promise which resolves when element specified by selector string is added to DOM
+     */
+    waitForSelector(selector,  {timeout = 30000}) {
+
+        return  Page.waitFor(() => this.$( selector ),  timeout);
+    }
+
+    /**
+     * @param {function|string} expression - Function or Expression to be evaluated in the page context
+     * @param {Serializable}    parameter  - Arguments to pass to the function
+     *
+     * @return {Promise<Serializable>} Promise which resolves to the value of `expression`
+     */
     async evaluate(expression, ...parameter) {
 
         expression = (expression instanceof Function)  ?
@@ -190,6 +281,15 @@ class Page extends EventEmitter {
         return  this.window.name  &&  JSON.parse( this.window.name );
     }
 
+    /**
+     * In the case of multiple pages in a single browser, each page can have its own viewport size
+     *
+     * @param {object} viewport
+     * @param {number} [viewport.width]  page width in pixels
+     * @param {number} [viewport.height] page height in pixels
+     *
+     * @return {Promise}
+     */
     setViewport({width, height}) {
 
         return  this.evaluate(function (width, height) {
@@ -201,6 +301,9 @@ class Page extends EventEmitter {
         },  width,  height);
     }
 
+    /**
+     * @return {Promise<object>} Include keys of `width`, `height`, `deviceScaleFactor`, `isMobile`, `hasTouch` & `isLandscape`
+     */
     async viewport() {
 
         return Object.assign(
@@ -220,6 +323,18 @@ class Page extends EventEmitter {
         );
     }
 
+    /**
+     * Adds a `<link rel="stylesheet">` tag into the page with the desired url or a `<style type="text/css">` tag with the content
+     *
+     * @param {object} options
+     * @param {string} [options.path]    Path to the CSS file to be injected into frame.
+     *                                   If path is a relative path, then it is resolved relative to current working directory.
+     * @param {string} [options.url]     URL of the <link> tag
+     * @param {string} [options.content] Raw CSS content to be injected into frame
+     *
+     * @return {Promise} which resolves to the added tag when the stylesheet's onload fires
+     *                   or when the CSS content was injected into frame
+     */
     async addStyleTag({path, url, content}) {
 
         if ( path )  url = Path.resolve( path );
@@ -239,6 +354,18 @@ class Page extends EventEmitter {
         this.document.head.appendChild( CSS );
     }
 
+    /**
+     * Adds a `<script>` tag into the page with the desired url or content
+     *
+     * @param {object} options
+     * @param {string} [options.path]    Path to the JavaScript file to be injected into frame.
+     *                                   If path is a relative path, then it is resolved relative to current working directory.
+     * @param {string} [options.url]     URL of a script to be added
+     * @param {string} [options.content] Raw JavaScript content to be injected into frame
+     *
+     * @return {Promise} which resolves to the added tag when the script's onload fires
+     *                   or when the script content was injected into frame
+     */
     async addScriptTag({path, url, content}) {
 
         if ( path )  url = Path.resolve( path );
@@ -260,6 +387,21 @@ class Page extends EventEmitter {
         target.dispatchEvent( event );
     }
 
+    /**
+     * This method fetches an element with selector, scrolls it into view if needed,
+     * and then uses `page.mouse` to click in the center of the element.
+     * If there's no element matching selector, the method throws an error.
+     *
+     * Bare in mind that if `.click()` triggers a navigation event
+     * and there's a separate `page.waitForNavigation()` promise to be resolved,
+     * you may end up with a race condition that yields unexpected results.
+     *
+     * @param {string} selector - A selector to search for element to click.
+     *                            If there are multiple elements satisfying the selector,
+     *                            the first will be clicked.
+     * @return {Promise} Promise which resolves when the element matching selector is successfully clicked.
+     *                   The Promise will be rejected if there is no element matching selector.
+     */
     async click(selector) {
 
         await this.trigger(selector, 'MouseEvent', 'mousedown', true, true);
@@ -269,6 +411,16 @@ class Page extends EventEmitter {
         this.document.querySelector( selector ).click();
     }
 
+    /**
+     * This method fetches an element with selector and focuses it.
+     * If there's no element matching selector, the method throws an error.
+     *
+     * @param {string} selector - A selector of an element to focus.
+     *                            If there are multiple elements satisfying the selector,
+     *                            the first will be focused.
+     * @return {Promise} Promise which resolves when the element matching selector is successfully focused.
+     *                   The promise will be rejected if there is no element matching selector.
+     */
     async focus(selector) {
 
         this.document.querySelector( selector ).focus();

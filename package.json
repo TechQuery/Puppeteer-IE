@@ -12,6 +12,9 @@
   "engines": {
     "node": "^7.6.0"
   },
+  "os": [
+      "win32"
+  ],
   "dependencies": {
     "winax": "^1.0.8"
   },
@@ -21,6 +24,7 @@
     "fs-extra": "^5.0.0",
     "fs-match": "^0.2.1",
     "html-pages": "^2.1.1",
+    "husky": "^0.14.3",
     "js-beautify": "^1.7.5",
     "jsdoc": "^3.5.5",
     "jsdoc-inheritance-diagram": "^1.2.1",
@@ -29,12 +33,14 @@
     "should": "^13.2.1"
   },
   "scripts": {
+    "lint": "eslint ./source/ ./test/",
+    "precommit": "npm run lint",
     "document": "jsdoc ./source/ -c ./build/document.json",
     "clean": "cd ./docs/  &&  reduce-blank  &&  node ../build/beautifyDoc",
     "build": "npm run document  &&  npm run clean",
+    "help": "html-pages docs/ -o",
     "test": "mocha --recursive --no-timeouts -c --inline-diffs --exit",
-    "debug": "npm test -- --inspect-brk",
-    "help": "html-pages docs/ -o"
+    "debug": "npm test -- --inspect-brk"
   },
   "repository": {
     "type": "git",

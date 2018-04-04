@@ -1,6 +1,23 @@
 'use strict';
 
 /**
+ * Serializable value
+ *
+ * @typedef {number|boolean|string|object|array} Serializable
+ *
+ * @see     {@link
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description|Promise}
+ */
+
+/**
+ * A proxy of the return value in the future
+ *
+ * @typedef {Promise} Promise
+ *
+ * @see     {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise|Promise}
+ */
+
+/**
  * Event emitter
  *
  * @typedef {EventEmitter} EventEmitter
@@ -18,19 +35,22 @@ const Browser = require('./Browser'), stack = [ ];
  */
 class Puppeteer {
     /**
-     * Launch a Browser
+     * Launch a browser instance with given arguments.
+     * The browser will be closed when the parent NodeJS process is closed.
      *
-     * @memberof Puppeteer
-     *
-     * @param {object} [options]
+     * @param {object}  [options]                 Set of configurable options to set on the browser
+     * @param {boolean} [options.headless = true] Whether to run browser in headless mode
      *
      * @return {Promise<Browser>}
      */
-    static async launch(options = { }) {
+    static async launch({headless = true}) {
 
-        return  stack[stack.push(new Browser( options.headless )) - 1];
+        return  stack[stack.push(new Browser( headless )) - 1];
     }
 
+    /**
+     * @return {string} A path where Puppeteer expects to find Internet Explorer
+     */
     static executablePath() {
 
         const page = stack[0]  &&  stack[0]._page[0];
