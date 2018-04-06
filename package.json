@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-ie",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "descripton": "Headless Internet Explorer NodeJS API inspired by Puppeteer.",
   "keywords": [
     "internet-explorer",
@@ -13,7 +13,7 @@
     "node": "^7.6.0"
   },
   "os": [
-      "win32"
+    "win32"
   ],
   "dependencies": {
     "winax": "^1.0.8"

@@ -18,32 +18,40 @@ class Mouse {
         this._button = 'none';
     }
 
-    static makeEvent(options) {
+    trigger(name,  bubble,  cancel,  options = { }) {
 
-        return {
-            detail:    options.clickCount,
-            button:    ['left', 'middle', 'right'].indexOf( options.button )
-        };
+        const page = this._page;
+
+        return page.trigger(
+            [this._x,  this._y],
+            'Mouse',  'mouse' + name,  bubble,  cancel,
+            page.document.defaultView, options.clickCount,
+            page.window.screenLeft + this._x,  page.window.screenTop + this._y,
+            this._x,  this._y,
+            false, false, false, false,
+            ['left', 'middle', 'right'].indexOf( options.button ),
+            null
+        );
     }
 
     async moveTo(x, y) {
 
-        const page = this._page, last = [this._x, this._y], next = [x, y];
+        if (! await this._page.isSameElement([this._x, this._y],  [x, y])) {
 
-        if (! await page.isSameElement(last, next)) {
+            await this.trigger('out', true, true);
 
-            await page.trigger(last, 'MouseEvent', 'mouseout', true, true);
+            await this.trigger('leave', false, false);
 
-            await page.trigger(last, 'MouseEvent', 'mouseleave', false, false);
+            this._x = x,  this._y = y;
 
-            await page.trigger(next, 'MouseEvent', 'mouseover', true, true);
+            await this.trigger('over', true, true);
 
-            await page.trigger(next, 'MouseEvent', 'mouseenter', false, false);
+            await this.trigger('enter', false, false);
         }
 
-        await page.trigger(next, 'MouseEvent', 'mousemove', true, true);
-
         this._x = x,  this._y = y;
+
+        await this.trigger('move', true, true);
     }
 
     /**
@@ -78,11 +86,7 @@ class Mouse {
      */
     down(options = {button: 'left', clickCount: 1}) {
 
-        return  this._page.trigger(
-            [this._x, this._y],
-            'MouseEvent',  'mousedown',  true,  true,
-            Mouse.makeEvent( options )
-        );
+        return  this.trigger('down', true, true, options);
     }
 
     /**
@@ -96,11 +100,7 @@ class Mouse {
      */
     up(options = {button: 'left', clickCount: 1}) {
 
-        return  this._page.trigger(
-            [this._x, this._y],
-            'MouseEvent',  'mouseup',  true,  true,
-            Mouse.makeEvent( options )
-        );
+        return  this.trigger('up', true, true, options);
     }
 
     /**

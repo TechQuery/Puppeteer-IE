@@ -42,6 +42,12 @@ class Page extends EventEmitter {
                 target = target[ name ];
 
                 return  (name in getter)  ?  target.valueOf()  :  target;
+            },
+            set:    function (target, name, value) {
+
+                target[ name ] = value;
+
+                return true;
             }
         });
     }
@@ -400,9 +406,9 @@ class Page extends EventEmitter {
         return  this.document.all(await this.evaluate(`${expression}.sourceIndex`));
     }
 
-    async trigger(target,  type,  name,  bubble,  cancel,  more = { }) {
+    async trigger(target,  type,  name,  ...parameter) {
 
-        const document = this.document;
+        const document = this.document;  type += 'Event';
 
         if (typeof target === 'string')
             target = document.querySelector( target );
@@ -411,14 +417,53 @@ class Page extends EventEmitter {
 
         const event = document.createEvent( type );
 
-        event.initEvent(name, bubble, cancel);
+        try {
+            event['init' + type](name,  ...parameter);
+        } catch (error) {
+            console.warn( parameter );
+        }
 
         return  await new Promise((resolve) => {
 
-            setTimeout(() => resolve(
-                target.dispatchEvent( Object.assign(event, more) )
-            ));
+            setTimeout( () => resolve( target.dispatchEvent( event ) ) );
         });
+    }
+
+    /**
+     * Sends a `keydown`, `keypress`/`input`, and `keyup` event
+     * for each character in the text.
+     *
+     * @param {string} selector          A selector of an element to type into.
+     *                                   If there are multiple elements satisfying the selector,
+     *                                   the first will be used.
+     * @param {string} text              A text to type into a focused element
+     * @param {object} [options]
+     * @param {number} [options.delay=0] Time to wait between key presses in milliseconds
+     *
+     * @return {Promise}
+     */
+    async type(selector,  text,  options = {delay: 0}) {
+
+        const target = await this.$( selector );
+
+        const key = (target.contentEditable || (target.designMode === 'on'))  ?
+            'textContent'  :  'value';
+
+        for (let i = 0;  text[i];  i++) {
+
+            await this.trigger(
+                target, 'Keyboard', 'keypress',
+                true, true, null,
+                false, false, false, false,
+                0, text.charCodeAt(i)
+            );
+
+            target[ key ] += text[i];
+
+            await this.trigger(target, '', 'input', true, false);
+
+            if ( options.delay )  await Utility.waitFor( options.delay );
+        }
     }
 
     async centerOf(selector) {

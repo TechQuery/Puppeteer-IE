@@ -127,5 +127,40 @@ describe('Page',  function () {
 
             (await page.evaluate('document.activeElement.textContent')).should.be.equal('Home');
         });
+
+        it('.prototype.type()',  async function () {
+
+            const input = await page.$('h1');
+
+            input.setAttribute('contentEditable', true);
+
+            await page.type('h1', ', Hello!');
+
+            input.innerText.should.be.equal('Puppeteer-IE, Hello!');
+        });
+    });
+
+    describe('Navigator',  function () {
+
+        it('.prototype.reload()',  async function () {
+
+            await page.reload();
+
+            (await page.$('h1')).innerText.should.be.equal('Puppeteer-IE');
+        });
+
+        it('.prototype.goBack()',  async function () {
+
+            await page.goBack();
+
+            page.url().should.be.equal( process.env.npm_package_homepage );
+        });
+
+        it('.prototype.goForward()',  async function () {
+
+            await page.goForward();
+
+            page.url().should.be.equal(process.env.npm_package_homepage  +  'index.html');
+        });
     });
 });
