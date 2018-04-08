@@ -8,7 +8,10 @@ class Keyboard {
      */
     constructor(page) {
         this._page = page;
+<<<<<<< HEAD
         this._target = 'none';
+=======
+>>>>>>> init keyboard interface
     }
 
     async down(key, options) {
@@ -26,6 +29,7 @@ class Keyboard {
     async type(text, options) {
 
     }
+<<<<<<< HEAD
 
     async up(key) {
 
@@ -38,4 +42,9 @@ class Keyboard {
             options.key, options.location, options.modifiersList, options.repeat
         );
     }
+=======
+    async up(key) {
+
+    }
+>>>>>>> init keyboard interface
 }
