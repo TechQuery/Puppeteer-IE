@@ -52,6 +52,8 @@
                     <li data-type='method'><a href="Page.html#click">click</a></li>
                     <li data-type='method'><a href="Page.html#close">close</a></li>
                     <li data-type='method'><a href="Page.html#content">content</a></li>
+                    <li data-type='method'><a href="Page.html#cookies">cookies</a></li>
+                    <li data-type='method'><a href="Page.html#deleteCookie">deleteCookie</a></li>
                     <li data-type='method'><a href="Page.html#evaluate">evaluate</a></li>
                     <li data-type='method'><a href="Page.html#focus">focus</a></li>
                     <li data-type='method'><a href="Page.html#goBack">goBack</a></li>
@@ -60,6 +62,7 @@
                     <li data-type='method'><a href="Page.html#hover">hover</a></li>
                     <li data-type='method'><a href="Page.html#reload">reload</a></li>
                     <li data-type='method'><a href="Page.html#setContent">setContent</a></li>
+                    <li data-type='method'><a href="Page.html#setCookie">setCookie</a></li>
                     <li data-type='method'><a href="Page.html#setViewport">setViewport</a></li>
                     <li data-type='method'><a href="Page.html#title">title</a></li>
                     <li data-type='method'><a href="Page.html#type">type</a></li>
@@ -89,6 +92,7 @@
 
 const Utility = require('./utility');
 
+
 class Mouse {
     /**
      * @constructs
@@ -102,6 +106,16 @@ class Mouse {
         this._x = this._y =  0;
 
         this._button = 'none';
+    }
+
+    isSameElement(pointA, pointB) {
+
+        return  this._page.evaluate(function (A, B) {
+
+            return  document.elementFromPoint(A[0], A[1]).isSameNode(
+                document.elementFromPoint(B[0], B[1])
+            );
+        },  pointA,  pointB);
     }
 
     trigger(name,  bubble,  cancel,  options = { }) {
@@ -122,7 +136,7 @@ class Mouse {
 
     async moveTo(x, y) {
 
-        if (! await this._page.isSameElement([this._x, this._y],  [x, y])) {
+        if (! await this.isSameElement([this._x, this._y],  [x, y])) {
 
             await this.trigger('out', true, true);
 

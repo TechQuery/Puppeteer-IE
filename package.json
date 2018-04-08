@@ -16,6 +16,7 @@
     "win32"
   ],
   "dependencies": {
+    "cookie": "^0.3.1",
     "winax": "^1.0.8"
   },
   "devDependencies": {

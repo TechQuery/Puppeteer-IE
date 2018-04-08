@@ -52,6 +52,8 @@
                     <li data-type='method'><a href="Page.html#click">click</a></li>
                     <li data-type='method'><a href="Page.html#close">close</a></li>
                     <li data-type='method'><a href="Page.html#content">content</a></li>
+                    <li data-type='method'><a href="Page.html#cookies">cookies</a></li>
+                    <li data-type='method'><a href="Page.html#deleteCookie">deleteCookie</a></li>
                     <li data-type='method'><a href="Page.html#evaluate">evaluate</a></li>
                     <li data-type='method'><a href="Page.html#focus">focus</a></li>
                     <li data-type='method'><a href="Page.html#goBack">goBack</a></li>
@@ -60,6 +62,7 @@
                     <li data-type='method'><a href="Page.html#hover">hover</a></li>
                     <li data-type='method'><a href="Page.html#reload">reload</a></li>
                     <li data-type='method'><a href="Page.html#setContent">setContent</a></li>
+                    <li data-type='method'><a href="Page.html#setCookie">setCookie</a></li>
                     <li data-type='method'><a href="Page.html#setViewport">setViewport</a></li>
                     <li data-type='method'><a href="Page.html#title">title</a></li>
                     <li data-type='method'><a href="Page.html#type">type</a></li>
@@ -167,7 +170,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line206">line 206</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line338">line 338</a>
                             </li>
                         </ul>
                     </dd>
@@ -233,7 +236,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line219">line 219</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line351">line 351</a>
                             </li>
                         </ul>
                     </dd>
@@ -299,7 +302,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line378">line 378</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line505">line 505</a>
                             </li>
                         </ul>
                     </dd>
@@ -372,7 +375,7 @@
                                             </td>
 
                                             <td class="description last">
-                                                <p>Path to the JavaScript file to be injected into frame.<br> If path is a relative path, then it is resolved relative to current working directory.</p>
+                                                <p>Path to the JavaScript file to be injected into frame.<br> If path is a relative path,<br> then it is resolved relative to current working directory.</p>
                                             </td>
                                         </tr>
 
@@ -452,7 +455,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line347">line 347</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line473">line 473</a>
                             </li>
                         </ul>
                     </dd>
@@ -460,7 +463,7 @@
                 </dl>
 
                 <div class="description">
-                    <p>Adds a <code>&lt;link rel=&quot;stylesheet&quot;&gt;</code> tag into the page with the desired url or a <code>&lt;style type=&quot;text/css&quot;&gt;</code> tag with the content</p>
+                    <p>Adds a <code>&lt;link rel=&quot;stylesheet&quot;&gt;</code> tag into the page with the desired url<br>or a <code>&lt;style type=&quot;text/css&quot;&gt;</code> tag with the content</p>
                 </div>
 
                 <h5>Parameters:</h5>
@@ -525,7 +528,7 @@
                                             </td>
 
                                             <td class="description last">
-                                                <p>Path to the CSS file to be injected into frame.<br> If path is a relative path, then it is resolved relative to current working directory.</p>
+                                                <p>Path to the CSS file to be injected into frame.<br> If path is a relative path,<br> then it is resolved relative to current working directory.</p>
                                             </td>
                                         </tr>
 
@@ -606,7 +609,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line531">line 531</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line658">line 658</a>
                             </li>
                         </ul>
                     </dd>
@@ -807,7 +810,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line155">line 155</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line161">line 161</a>
                             </li>
                         </ul>
                     </dd>
@@ -827,7 +830,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line171">line 171</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line303">line 303</a>
                             </li>
                         </ul>
                     </dd>
@@ -851,6 +854,265 @@
                     </dd>
                 </dl>
 
+                <h4 class="name" id="cookies"><span class="type-signature"></span>cookies<span class="signature">(&hellip;urls)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>.&lt;Array.&lt;Object>>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line219">line 219</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>If no URLs are specified, this method returns cookies for the current page URL.<br>If URLs are specified, only cookies for those URLs are returned.</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th>Attributes</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>urls</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">string</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                                &lt;repeatable><br>
+
+                            </td>
+
+                            <td class="description last"></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <div class="param-desc">
+                    <p>Include keys of <code>name</code>, <code>value</code>, <code>domain</code>, <code>path</code>,<br> <code>expires</code>, <code>httpOnly</code>, <code>secure</code>, <code>session</code> &amp; <code>sameSite</code>.</p>
+                </div>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a>.&lt;Array.&lt;Object>></span>
+
+                    </dd>
+                </dl>
+
+                <h4 class="name" id="deleteCookie"><span class="type-signature"></span>deleteCookie<span class="signature">(&hellip;cookies)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line293">line 293</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th>Attributes</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>cookies</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">object</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                                &lt;repeatable><br>
+
+                            </td>
+
+                            <td class="description last">
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>name</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>url</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>domain</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>path</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>secure</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">boolean</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
                 <h4 class="name" id="evaluate"><span class="type-signature">(async) </span>evaluate<span class="signature">(expression, &hellip;parameter)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>.&lt;<a href="global.html#Serializable">Serializable</a>>}</span></h4>
 
                 <dl class="details">
@@ -859,7 +1121,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line254">line 254</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line389">line 389</a>
                             </li>
                         </ul>
                     </dd>
@@ -954,7 +1216,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line399">line 399</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line526">line 526</a>
                             </li>
                         </ul>
                     </dd>
@@ -1024,7 +1286,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line115">line 115</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line119">line 119</a>
                             </li>
                         </ul>
                     </dd>
@@ -1113,7 +1375,7 @@
                                             </td>
 
                                             <td class="description last">
-                                                <p>Maximum navigation time in milliseconds, pass 0 to disable timeout.</p>
+                                                <p>Maximum navigation time in milliseconds,<br> pass 0 to disable timeout.</p>
                                             </td>
                                         </tr>
 
@@ -1174,7 +1436,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line131">line 131</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line136">line 136</a>
                             </li>
                         </ul>
                     </dd>
@@ -1263,7 +1525,7 @@
                                             </td>
 
                                             <td class="description last">
-                                                <p>Maximum navigation time in milliseconds, pass 0 to disable timeout.</p>
+                                                <p>Maximum navigation time in milliseconds,<br> pass 0 to disable timeout.</p>
                                             </td>
                                         </tr>
 
@@ -1324,7 +1586,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line99">line 99</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line102">line 102</a>
                             </li>
                         </ul>
                     </dd>
@@ -1374,7 +1636,7 @@
                             </td>
 
                             <td class="description last">
-                                <p>URL to navigate page to. The url should include scheme, e.g. https://.</p>
+                                <p>URL to navigate page to.<br> The url should include scheme, e.g. https://.</p>
                             </td>
                         </tr>
 
@@ -1442,7 +1704,7 @@
                                             </td>
 
                                             <td class="description last">
-                                                <p>Maximum navigation time in milliseconds, pass 0 to disable timeout.</p>
+                                                <p>Maximum navigation time in milliseconds,<br> pass 0 to disable timeout.</p>
                                             </td>
                                         </tr>
 
@@ -1503,7 +1765,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line500">line 500</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line627">line 627</a>
                             </li>
                         </ul>
                     </dd>
@@ -1574,7 +1836,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line145">line 145</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line151">line 151</a>
                             </li>
                         </ul>
                     </dd>
@@ -1659,7 +1921,7 @@
                                             </td>
 
                                             <td class="description last">
-                                                <p>Maximum navigation time in milliseconds, pass 0 to disable timeout.</p>
+                                                <p>Maximum navigation time in milliseconds,<br> pass 0 to disable timeout.</p>
                                             </td>
                                         </tr>
 
@@ -1720,7 +1982,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line189">line 189</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line321">line 321</a>
                             </li>
                         </ul>
                     </dd>
@@ -1761,6 +2023,267 @@
                     </tbody>
                 </table>
 
+                <h4 class="name" id="setCookie"><span class="type-signature"></span>setCookie<span class="signature">(&hellip;cookies)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line278">line 278</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th>Attributes</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>cookies</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">object</span>
+
+                            </td>
+
+                            <td class="attributes">
+
+                                &lt;repeatable><br>
+
+                            </td>
+
+                            <td class="description last">
+                                <h6>Properties</h6>
+
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Name</th>
+
+                                            <th>Type</th>
+
+                                            <th>Attributes</th>
+
+                                            <th class="last">Description</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td class="name"><code>name</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>value</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>url</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>domain</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>path</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>expires</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">number</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>Unix time in seconds</p>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>httpOnly</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">boolean</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>secure</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">boolean</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last"></td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="name"><code>sameSite</code></td>
+
+                                            <td class="type">
+
+                                                <span class="param-type">string</span>
+
+                                            </td>
+
+                                            <td class="attributes">
+
+                                                &lt;optional><br>
+
+                                            </td>
+
+                                            <td class="description last">
+                                                <p>&quot;Strict&quot; or &quot;Lax&quot;</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
                 <h4 class="name" id="setViewport"><span class="type-signature"></span>setViewport<span class="signature">(viewport)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
 
                 <dl class="details">
@@ -1769,7 +2292,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line302">line 302</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line425">line 425</a>
                             </li>
                         </ul>
                     </dd>
@@ -1777,7 +2300,7 @@
                 </dl>
 
                 <div class="description">
-                    <p>In the case of multiple pages in a single browser, each page can have its own viewport size</p>
+                    <p>In the case of multiple pages in a single browser,<br>each page can have its own viewport size.</p>
                 </div>
 
                 <h5>Parameters:</h5>
@@ -1925,7 +2448,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line445">line 445</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line572">line 572</a>
                             </li>
                         </ul>
                     </dd>
@@ -2114,7 +2637,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line316">line 316</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line440">line 440</a>
                             </li>
                         </ul>
                     </dd>
@@ -2124,7 +2647,7 @@
                 <h5>Returns:</h5>
 
                 <div class="param-desc">
-                    <p>Include keys of <code>width</code>, <code>height</code>, <code>deviceScaleFactor</code>, <code>isMobile</code>, <code>hasTouch</code> &amp; <code>isLandscape</code></p>
+                    <p>Include keys of <code>width</code>, <code>height</code>, <code>deviceScaleFactor</code>,<br> <code>isMobile</code>, <code>hasTouch</code> &amp; <code>isLandscape</code></p>
                 </div>
 
                 <dl class="param-type">
@@ -2146,7 +2669,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line81">line 81</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line82">line 82</a>
                             </li>
                         </ul>
                     </dd>
@@ -2231,7 +2754,7 @@
                                             </td>
 
                                             <td class="description last">
-                                                <p>Maximum navigation time in milliseconds, pass 0 to disable timeout.</p>
+                                                <p>Maximum navigation time in milliseconds,<br> pass 0 to disable timeout.</p>
                                             </td>
                                         </tr>
 
@@ -2257,7 +2780,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line243">line 243</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line378">line 378</a>
                             </li>
                         </ul>
                     </dd>
@@ -2266,7 +2789,7 @@
 
                 <div class="description">
                     <p>Wait for the selector to appear in page.</p>
-                    <p>If at the moment of calling the method the selector already exists, the method will return immediately.<br>If the selector doesn't appear after the timeout milliseconds of waiting, the function will throw.</p>
+                    <p>If at the moment of calling the method the selector already exists,<br>the method will return immediately.<br>If the selector doesn't appear after the timeout milliseconds of waiting,<br>the function will throw.</p>
                 </div>
 
                 <h5>Parameters:</h5>
@@ -2366,7 +2889,7 @@
                                             </td>
 
                                             <td class="description last">
-                                                <p>Maximum time to wait for in milliseconds, pass 0 to disable timeout.</p>
+                                                <p>Maximum time to wait for in milliseconds,<br> pass 0 to disable timeout.</p>
                                             </td>
                                         </tr>
 

@@ -2,7 +2,7 @@
 
 const EventEmitter = require('events'), Path = require('path');
 
-const WinAX = require('winax');
+const WinAX = require('winax'), Cookie = require('cookie');
 
 const Utility = require('./utility'), Mouse = require('./Mouse');
 
@@ -74,7 +74,8 @@ class Page extends EventEmitter {
 
     /**
      * @param {object} [options]
-     * @param {number} [options.timeout=30000] Maximum navigation time in milliseconds, pass 0 to disable timeout.
+     * @param {number} [options.timeout=30000] Maximum navigation time in milliseconds,
+     *                                         pass 0 to disable timeout.
      *
      * @emits Page#load
      */
@@ -89,9 +90,11 @@ class Page extends EventEmitter {
     }
 
     /**
-     * @param {string} [url='about:blank']        URL to navigate page to. The url should include scheme, e.g. https://.
+     * @param {string} [url='about:blank']        URL to navigate page to.
+     *                                            The url should include scheme, e.g. https://.
      * @param {object} [options]
-     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds, pass 0 to disable timeout.
+     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds,
+     *                                            pass 0 to disable timeout.
      * @param {number} [options.waitUntil='load'] When to consider navigation succeeded
      *
      * @return {Promise}
@@ -107,7 +110,8 @@ class Page extends EventEmitter {
      * Navigate to the previous page in history
      *
      * @param {object} [options]
-     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds, pass 0 to disable timeout.
+     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds,
+     *                                            pass 0 to disable timeout.
      * @param {number} [options.waitUntil='load'] When to consider navigation succeeded
      *
      * @return {Promise}
@@ -123,7 +127,8 @@ class Page extends EventEmitter {
      * Navigate to the next page in history
      *
      * @param {object} [options]
-     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds, pass 0 to disable timeout.
+     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds,
+     *                                            pass 0 to disable timeout.
      * @param {number} [options.waitUntil='load'] When to consider navigation succeeded
      *
      * @return {Promise}
@@ -137,7 +142,8 @@ class Page extends EventEmitter {
 
     /**
      * @param {object} [options]
-     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds, pass 0 to disable timeout.
+     * @param {number} [options.timeout=30000]    Maximum navigation time in milliseconds,
+     *                                            pass 0 to disable timeout.
      * @param {number} [options.waitUntil='load'] When to consider navigation succeeded
      *
      * @return {Promise}
@@ -161,6 +167,132 @@ class Page extends EventEmitter {
         WinAX.release( this._target );
 
         this.emit('close');
+    }
+
+    get cookie() {
+
+        return  Cookie.parse(this.document.cookie + '');
+    }
+
+    set cookie(object) {
+
+        for (let name in object)
+            if (typeof object[ name ] === 'string')
+                this.document.cookie = Cookie.serialize(name, object[name]);
+            else {
+                let option = object[ name ], value = object[ name ].value;
+
+                delete option.name;  delete option.value;  delete option.url;
+
+                this.document.cookie = Cookie.serialize(name, value, option);
+            }
+    }
+
+    mapURL(list, filter) {
+
+        return  Promise.all(list.map(async (url, index) => {
+
+            if (url !== this.url()) {
+
+                var page = new Page();
+
+                await page.goto( url );
+            }
+
+            var result = filter.call(page || this,  url,  index,  list);
+
+            if ( page )  page.close();
+
+            return result;
+        }));
+    }
+
+    /**
+     * If no URLs are specified, this method returns cookies for the current page URL.
+     * If URLs are specified, only cookies for those URLs are returned.
+     *
+     * @param {...string} urls
+     *
+     * @return {Promise<Array<Object>>} Include keys of `name`, `value`, `domain`, `path`,
+     *                                  `expires`, `httpOnly`, `secure`, `session` & `sameSite`.
+     */
+    cookies(...urls) {
+
+        if (! urls[0])  urls.push( this.url() );
+
+        return this.mapURL(
+            urls,  Object.getOwnPropertyDescriptor(Page.prototype, 'cookie').get
+        );
+    }
+
+    groupCookie(list) {
+
+        const group = { };
+
+        for (let cookie of list) {
+
+            cookie.url = cookie.url || this.url();
+
+            (group[ cookie.url ] = group[ cookie.url ]  || [ ]).push( cookie );
+        }
+
+        return group;
+    }
+
+    pushCookie(list, remove) {
+
+        const group = this.groupCookie( list );
+
+        return  this.mapURL(Object.keys( group ),  function (url) {
+
+            const cookie = this.cookie;
+
+            for (let item  of  group[ url ]) {
+
+                if ( remove )  item.expires = Date.now() / 1000 - 1;
+
+                if ( item.expires )
+                    item.expires = new Date(item.expires * 1000);
+
+                cookie[ item.name ] = item;
+            }
+
+            this.cookie = cookie;
+        });
+    }
+
+    /**
+     * @param {...object} cookies
+     * @param {string}    cookies.name
+     * @param {string}    cookies.value
+     * @param {string}    [cookies.url]
+     * @param {string}    [cookies.domain]
+     * @param {string}    [cookies.path]
+     * @param {number}    [cookies.expires]  Unix time in seconds
+     * @param {boolean}   [cookies.httpOnly]
+     * @param {boolean}   [cookies.secure]
+     * @param {string}    [cookies.sameSite] "Strict" or "Lax"
+     *
+     * @return {Promise}
+     */
+    setCookie(...cookies) {
+
+        return  this.pushCookie( cookies );
+    }
+
+    /**
+     * @param {...object} cookies
+     * @param {string}    cookies.name
+     * @param {string}    [cookies.url]
+     * @param {string}    [cookies.domain]
+     * @param {string}    [cookies.path]
+     * @param {boolean}   [cookies.secure]
+     *
+     * @return {Promise}
+     */
+    deleteCookie(...cookies) {
+
+        return  this.pushCookie(cookies, true);
     }
 
     /**
@@ -231,12 +363,15 @@ class Page extends EventEmitter {
     /**
      * Wait for the selector to appear in page.
      *
-     * If at the moment of calling the method the selector already exists, the method will return immediately.
-     * If the selector doesn't appear after the timeout milliseconds of waiting, the function will throw.
+     * If at the moment of calling the method the selector already exists,
+     * the method will return immediately.
+     * If the selector doesn't appear after the timeout milliseconds of waiting,
+     * the function will throw.
      *
      * @param {string} selector                A selector of an element to wait for
      * @param {object} [options]
-     * @param {number} [options.timeout=30000] Maximum time to wait for in milliseconds, pass 0 to disable timeout.
+     * @param {number} [options.timeout=30000] Maximum time to wait for in milliseconds,
+     *                                        pass 0 to disable timeout.
      *
      * @return {Promise<ElementHandle>} Promise which resolves when element specified by selector string is added to DOM
      */
@@ -277,21 +412,9 @@ class Page extends EventEmitter {
         return  this.window.name  &&  JSON.parse( this.window.name );
     }
 
-    isSameElement(pointA, pointB) {
-
-        return  this.evaluate(function (A, B) {
-
-            A = document.elementFromPoint(A[0], A[1]);
-
-            B = document.elementFromPoint(B[0], B[1]);
-
-            return  !(A.contains( B )  ||  B.contains( A ));
-
-        },  pointA,  pointB);
-    }
-
     /**
-     * In the case of multiple pages in a single browser, each page can have its own viewport size
+     * In the case of multiple pages in a single browser,
+     * each page can have its own viewport size.
      *
      * @param {object} viewport
      * @param {number} [viewport.width]  page width in pixels
@@ -311,7 +434,8 @@ class Page extends EventEmitter {
     }
 
     /**
-     * @return {Promise<object>} Include keys of `width`, `height`, `deviceScaleFactor`, `isMobile`, `hasTouch` & `isLandscape`
+     * @return {Promise<object>} Include keys of `width`, `height`, `deviceScaleFactor`,
+     *                           `isMobile`, `hasTouch` & `isLandscape`
      */
     async viewport() {
 
@@ -333,11 +457,13 @@ class Page extends EventEmitter {
     }
 
     /**
-     * Adds a `<link rel="stylesheet">` tag into the page with the desired url or a `<style type="text/css">` tag with the content
+     * Adds a `<link rel="stylesheet">` tag into the page with the desired url
+     * or a `<style type="text/css">` tag with the content
      *
      * @param {object} options
      * @param {string} [options.path]    Path to the CSS file to be injected into frame.
-     *                                   If path is a relative path, then it is resolved relative to current working directory.
+     *                                   If path is a relative path,
+     *                                   then it is resolved relative to current working directory.
      * @param {string} [options.url]     URL of the <link> tag
      * @param {string} [options.content] Raw CSS content to be injected into frame
      *
@@ -368,7 +494,8 @@ class Page extends EventEmitter {
      *
      * @param {object} options
      * @param {string} [options.path]    Path to the JavaScript file to be injected into frame.
-     *                                   If path is a relative path, then it is resolved relative to current working directory.
+     *                                   If path is a relative path,
+     *                                   then it is resolved relative to current working directory.
      * @param {string} [options.url]     URL of a script to be added
      * @param {string} [options.content] Raw JavaScript content to be injected into frame
      *

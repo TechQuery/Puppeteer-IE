@@ -52,6 +52,8 @@
                     <li data-type='method'><a href="Page.html#click">click</a></li>
                     <li data-type='method'><a href="Page.html#close">close</a></li>
                     <li data-type='method'><a href="Page.html#content">content</a></li>
+                    <li data-type='method'><a href="Page.html#cookies">cookies</a></li>
+                    <li data-type='method'><a href="Page.html#deleteCookie">deleteCookie</a></li>
                     <li data-type='method'><a href="Page.html#evaluate">evaluate</a></li>
                     <li data-type='method'><a href="Page.html#focus">focus</a></li>
                     <li data-type='method'><a href="Page.html#goBack">goBack</a></li>
@@ -60,6 +62,7 @@
                     <li data-type='method'><a href="Page.html#hover">hover</a></li>
                     <li data-type='method'><a href="Page.html#reload">reload</a></li>
                     <li data-type='method'><a href="Page.html#setContent">setContent</a></li>
+                    <li data-type='method'><a href="Page.html#setCookie">setCookie</a></li>
                     <li data-type='method'><a href="Page.html#setViewport">setViewport</a></li>
                     <li data-type='method'><a href="Page.html#title">title</a></li>
                     <li data-type='method'><a href="Page.html#type">type</a></li>
@@ -114,6 +117,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects
 
 const Browser = require('./Browser'), stack = [ ];
 
+
 /**
  * Puppeteer API
  *
@@ -145,6 +149,7 @@ class Puppeteer {
     }
 }
 
+
 async function clear(error) {
 
     await Promise.all( stack.map(browser => browser.close()) );
@@ -161,6 +166,7 @@ async function clear(error) {
 
 for (let event  of  ['uncaughtException', 'unhandledRejection', 'SIGINT', 'exit'])
     process.on(event, clear);
+
 
 module.exports = Puppeteer;
 </code></pre>

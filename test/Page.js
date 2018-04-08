@@ -32,6 +32,34 @@ describe('Page',  function () {
         });
     });
 
+    describe('Cookie',  function () {
+
+        it('.prototype.setCookie()',  async function () {
+
+            await page.setCookie(
+                {name: 'test', value: 'test'},
+                {name: 'test', value: 'test', url: 'https://github.com/'}
+            );
+
+            (await page.cookies()).should.be.eql( [{test: 'test'}] );
+
+            (await page.cookies('https://github.com/'))[0].test
+                .should.be.eql('test');
+        });
+
+        it('.prototype.deleteCookie()',  async function () {
+
+            await page.deleteCookie({name: 'test'});
+
+            (await page.cookies()).should.be.eql( [{ }] );
+
+            await page.deleteCookie({name: 'test', url: 'https://github.com/'});
+
+            ((await page.cookies('https://github.com/'))[0].test || '')
+                .should.be.eql('');
+        });
+    });
+
     describe('Selector',  function () {
 
         it('.prototype.$()',  async function () {
@@ -69,7 +97,7 @@ describe('Page',  function () {
                 content:    'body { color: blue; }'
             });
 
-            (await page.evaluate('getComputedStyle( document.body ).color'))
+            (await page.evaluate('self.getComputedStyle( document.body ).color'))
                 .should.be.equal('rgb(0, 0, 255)');
         });
 

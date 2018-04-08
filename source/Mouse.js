@@ -18,6 +18,16 @@ class Mouse {
         this._button = 'none';
     }
 
+    isSameElement(pointA, pointB) {
+
+        return  this._page.evaluate(function (A, B) {
+
+            return  document.elementFromPoint(A[0], A[1]).isSameNode(
+                document.elementFromPoint(B[0], B[1])
+            );
+        },  pointA,  pointB);
+    }
+
     trigger(name,  bubble,  cancel,  options = { }) {
 
         const page = this._page;
@@ -36,7 +46,7 @@ class Mouse {
 
     async moveTo(x, y) {
 
-        if (! await this._page.isSameElement([this._x, this._y],  [x, y])) {
+        if (! await this.isSameElement([this._x, this._y],  [x, y])) {
 
             await this.trigger('out', true, true);
 
