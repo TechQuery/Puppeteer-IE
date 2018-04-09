@@ -8,6 +8,7 @@ class Keyboard {
      */
     constructor(page) {
         this._page = page;
+        this._target = 'none';
     }
 
     async down(key, options) {
@@ -25,7 +26,16 @@ class Keyboard {
     async type(text, options) {
 
     }
+
     async up(key) {
 
+    }
+
+    _trigger(name,  bubble,  cancel,  options = { }) {
+        return this._page.trigger(
+            this._target,  'Keyboard',  'key' + name,
+            bubble,  cancel,  page.document.defaultView, options.char,
+            options.key, options.location, options.modifiersList, options.repeat
+        );
     }
 }
