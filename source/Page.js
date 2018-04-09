@@ -34,7 +34,11 @@ class Page extends EventEmitter {
         const getter = { };
 
         for (let key  of  COM.__type)
-            if (key.invkind === 2)  getter[ key.name ] = 1;
+            if (
+                (key.invkind === 2)  &&  (COM[ key.name ] != null)  &&
+                (COM[ key.name ].__value !== '[object]')
+            )
+                getter[ key.name ] = 1;
 
         return  new Proxy(COM, {
             get:    function (target, name) {
@@ -50,6 +54,19 @@ class Page extends EventEmitter {
                 return true;
             }
         });
+    }
+
+    static wrapScript(expression, parameter) {
+
+        return  (expression instanceof Function) ?
+            `(${expression})(${
+                parameter.filter(
+                    value  =>  (value !== undefined)
+                ).map(
+                    item  =>  JSON.stringify( item )
+                )
+            })` :
+            `(function () { return ${expression}; })()`;
     }
 
     get document() {  return  Page.proxy( this._target.Document );  }
@@ -211,7 +228,7 @@ class Page extends EventEmitter {
      * If no URLs are specified, this method returns cookies for the current page URL.
      * If URLs are specified, only cookies for those URLs are returned.
      *
-     * @param {...string} urls
+     * @param {string} urls
      *
      * @return {Promise<Array<Object>>} Include keys of `name`, `value`, `domain`, `path`,
      *                                  `expires`, `httpOnly`, `secure`, `session` & `sameSite`.
@@ -262,16 +279,16 @@ class Page extends EventEmitter {
     }
 
     /**
-     * @param {...object} cookies
-     * @param {string}    cookies.name
-     * @param {string}    cookies.value
-     * @param {string}    [cookies.url]
-     * @param {string}    [cookies.domain]
-     * @param {string}    [cookies.path]
-     * @param {number}    [cookies.expires]  Unix time in seconds
-     * @param {boolean}   [cookies.httpOnly]
-     * @param {boolean}   [cookies.secure]
-     * @param {string}    [cookies.sameSite] "Strict" or "Lax"
+     * @param {object}  cookies
+     * @param {string}  cookies.name
+     * @param {string}  cookies.value
+     * @param {string}  [cookies.url]
+     * @param {string}  [cookies.domain]
+     * @param {string}  [cookies.path]
+     * @param {number}  [cookies.expires]  Unix time in seconds
+     * @param {boolean} [cookies.httpOnly]
+     * @param {boolean} [cookies.secure]
+     * @param {string}  [cookies.sameSite] "Strict" or "Lax"
      *
      * @return {Promise}
      */
@@ -281,12 +298,12 @@ class Page extends EventEmitter {
     }
 
     /**
-     * @param {...object} cookies
-     * @param {string}    cookies.name
-     * @param {string}    [cookies.url]
-     * @param {string}    [cookies.domain]
-     * @param {string}    [cookies.path]
-     * @param {boolean}   [cookies.secure]
+     * @param {object}  cookies
+     * @param {string}  cookies.name
+     * @param {string}  [cookies.url]
+     * @param {string}  [cookies.domain]
+     * @param {string}  [cookies.path]
+     * @param {boolean} [cookies.secure]
      *
      * @return {Promise}
      */
@@ -388,15 +405,7 @@ class Page extends EventEmitter {
      */
     async evaluate(expression, ...parameter) {
 
-        expression = (expression instanceof Function)  ?
-            `(${expression})(${
-                parameter.filter(
-                    value  =>  (value !== undefined)
-                ).map(
-                    item  =>  JSON.stringify( item )
-                )
-            })` :
-            `(function () { return ${expression}; })()`;
+        expression = Page.wrapScript(expression, parameter);
 
         try {
             this.window.execScript(
@@ -410,6 +419,38 @@ class Page extends EventEmitter {
         }
 
         return  this.window.name  &&  JSON.parse( this.window.name );
+    }
+
+    /**
+     * @param {function|string} expression              Function or Expression to be evaluated in the page context
+     * @param {object}          [options]
+     * @param {number}          [options.timeout=30000] Maximum time to wait for in milliseconds,
+     *                                                  pass 0 to disable timeout.
+     * @param {Serializable}    [parameter]             Arguments to pass to the function
+     *
+     * @return {Promise} Promise which resolves when the function returns a truthy value
+     */
+    waitForFunction(expression,  options = {timeout: 30000},  ...parameter) {
+
+        return Utility.waitFor(
+            options.timeout,  this.evaluate.bind(this, expression, ...parameter)
+        );
+    }
+
+    /**
+     * @param {number|string|function} condition   A selector, predicate or timeout to wait for
+     * @param {?object}                options
+     * @param {Serializable}           [parameter] Arguments to pass to the function
+     *
+     * @return {Promise} Promise which resolves to a success value
+     */
+    waitFor(condition, options, ...parameter) {
+
+        if (! isNaN( condition ))  return  Utility.waitFor( condition );
+
+        return this[`waitFor${
+            (condition instanceof Function)  ?  'Function'  :  'Selector'
+        }`](condition,  options || { },  ...parameter);
     }
 
     /**
@@ -528,9 +569,19 @@ class Page extends EventEmitter {
         this.document.querySelector( selector ).focus();
     }
 
-    async elementOf(expression) {
+    /**
+     * @param {function|string} expression - Function or Expression to be evaluated in the page context
+     * @param {Serializable}    parameter  - Arguments to pass to the function
+     *
+     * @return {Promise<ElementHandle>} Promise which resolves to the value of `expression` as **in-page Element**
+     */
+    async evaluateHandle(expression, ...parameter) {
 
-        return  this.document.all(await this.evaluate(`${expression}.sourceIndex`));
+        return Page.proxy(this.document.all(
+            await this.evaluate(
+                `${ Page.wrapScript(expression, parameter) }.sourceIndex`
+            )
+        ));
     }
 
     async trigger(target,  type,  name,  ...parameter) {
@@ -540,7 +591,7 @@ class Page extends EventEmitter {
         if (typeof target === 'string')
             target = document.querySelector( target );
         else if (target instanceof Array)
-            target = await this.elementOf( `document.elementFromPoint(${ target })` );
+            target = await this.evaluateHandle( `document.elementFromPoint(${ target })` );
 
         const event = document.createEvent( type );
 
@@ -554,6 +605,44 @@ class Page extends EventEmitter {
 
             setTimeout( () => resolve( target.dispatchEvent( event ) ) );
         });
+    }
+
+    /**
+     * Triggers a `change` and `input` event once all the provided options have been selected.
+     * If there's no `<select>` element matching selector, the method throws an error.
+     *
+     * @param {string} selector - A selector to query page for
+     * @param {string} values   - Values of options to select.
+     *                            If the `<select>` has the `multiple` attribute,
+     *                            all values are considered,
+     *                            otherwise only the first one is taken into account.
+     * @return {Promise<Array<string>>} Returns an array of option values
+     *                                  that have been successfully selected
+     */
+    async select(selector, ...values) {
+
+        const target = await this.$( selector );
+
+        const options = target.children, selected = [ ];
+
+        target.focus();
+
+        for (let i = 0, option, value;  i < options.length;  i++) {
+
+            option = options.item(i);  value = option.value + '';
+
+            if (
+                (option.selected = values.includes( value ))  &&
+                selected.push( value )  &&  (! target.multiple)
+            )
+                break;
+        }
+
+        this.trigger(target, '', 'input', true, false);
+
+        this.trigger(target, '', 'change', true, false);
+
+        return selected;
     }
 
     /**

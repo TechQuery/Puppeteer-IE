@@ -138,7 +138,58 @@ describe('Page',  function () {
         });
     });
 
+    describe('.prototype.waitFor()',  function () {
+
+        it('Number',  async function () {
+
+            const start = Date.now();
+
+            await page.waitFor(500);
+
+            Date.now().should.be.aboveOrEqual(start + 500);
+        });
+
+        it('Function',  async function () {
+
+            const end = Date.now() + 500;
+
+            await page.waitFor(function (end) {
+
+                return  (Date.now() >= end);
+
+            }, null, end);
+
+            Date.now().should.be.aboveOrEqual( end );
+        });
+    });
+
     describe('Event',  function () {
+
+        it('.prototype.focus()',  async function () {
+
+            await page.focus('a');
+
+            (await page.evaluate('document.activeElement.textContent')).should.be.equal('Home');
+        });
+
+        it('.prototype.select()',  async function () {
+
+            await page.evaluate(function (HTML) {
+
+                document.querySelector('article').innerHTML = HTML;
+            }, `
+                <select multiple>
+                    <option>0</option>
+                    <option>1</option>
+                    <option>2</option>
+                </select>
+            `);
+
+            (await page.select('select', '1', '2', '3')).should.be.eql(['1', '2']);
+
+            (await page.$$('option')).filter(item => item.selected).map(item => item.value)
+                .should.be.eql(['1', '2']);
+        });
 
         it('.prototype.click()',  async function () {
 
@@ -147,13 +198,6 @@ describe('Page',  function () {
             await page.waitForNavigation();
 
             page.url().should.be.equal(process.env.npm_package_homepage  +  'index.html');
-        });
-
-        it('.prototype.focus()',  async function () {
-
-            await page.focus('a');
-
-            (await page.evaluate('document.activeElement.textContent')).should.be.equal('Home');
         });
 
         it('.prototype.type()',  async function () {

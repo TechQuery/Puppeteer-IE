@@ -2,7 +2,9 @@
 
 Headless **Internet Explorer** NodeJS API inspired by [Puppeteer](https://github.com/GoogleChrome/puppeteer).
 
-**[ Notice ]**  [Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) isn't supported by this package as it utilizes [ActiveX](https://msdn.microsoft.com/en-us/library/windows/desktop/ms693753(v=vs.85).aspx), whereas Edge uses the [WebDriver protocol](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) & [DevTools Protocol](https://docs.microsoft.com/en-us/microsoft-edge/devtools-protocol/) for automation. So you can control it by [Selenium](http://seleniumhq.github.io/selenium/docs/api/javascript/index.html) or [Edge diagnostics adapter](https://github.com/Microsoft/edge-diagnostics-adapter).
+**[ Notice ]**  [Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) isn't supported by this package as it utilizes [ActiveX](https://msdn.microsoft.com/en-us/library/windows/desktop/ms693753),
+whereas Edge uses the [WebDriver protocol](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) & [DevTools Protocol](https://docs.microsoft.com/en-us/microsoft-edge/devtools-protocol/) for automation.
+So you can control it by [Selenium](http://seleniumhq.github.io/selenium/docs/api/javascript/index.html) or [Edge diagnostics adapter](https://github.com/Microsoft/edge-diagnostics-adapter).
 
 [![NPM](https://nodei.co/npm/puppeteer-ie.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/puppeteer-ie/)
 
