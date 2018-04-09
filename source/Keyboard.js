@@ -38,4 +38,5 @@ class Keyboard {
             options.key, options.location, options.modifiersList, options.repeat
         );
     }
+
 }
