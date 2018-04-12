@@ -123,50 +123,6 @@ class Page extends EventEmitter {
         this.mouse = new Mouse( this );
     }
 
-    static proxy(COM) {
-
-        const getter = { };
-
-        for (let key  of  COM.__type)
-            if (
-                (key.invkind === 2)  &amp;&amp;  (COM[ key.name ] != null)  &amp;&amp;
-                (COM[ key.name ].__value !== '[object]')
-            )
-                getter[ key.name ] = 1;
-
-        return  new Proxy(COM, {
-            get:    function (target, name) {
-
-                target = target[ name ];
-
-                return  (name in getter)  ?  target.valueOf()  :  target;
-            },
-            set:    function (target, name, value) {
-
-                target[ name ] = value;
-
-                return true;
-            }
-        });
-    }
-
-    static wrapScript(expression, parameter) {
-
-        return  (expression instanceof Function) ?
-            `(${expression})(${
-                parameter.filter(
-                    value  =>  (value !== undefined)
-                ).map(
-                    item  =>  JSON.stringify( item )
-                )
-            })` :
-            `(function () { return ${expression}; })()`;
-    }
-
-    get document() {  return  Page.proxy( this._target.Document );  }
-
-    get window() {  return  Page.proxy( this.document.defaultView );  }
-
     /**
      * @return {string}
      */
@@ -210,11 +166,15 @@ class Page extends EventEmitter {
      *
      * @return {Promise}
      */
-    goto(url = 'about:blank',  options = {timeout: 30000, waitUntil: 'load'}) {
+    async goto(url = 'about:blank',  options = {timeout: 30000, waitUntil: 'load'}) {
 
         this._target.Navigate( url );
 
-        return  this.waitForNavigation( options );
+        await this.waitForNavigation( options );
+
+        this.document = Utility.proxyCOM( this._target.Document );
+
+        this.window = Utility.proxyCOM( this.document.defaultView );
     }
 
     /**
@@ -273,9 +233,15 @@ class Page extends EventEmitter {
 
         if ( arguments[0] )  console.warn( arguments[0] );
 
-        this._target.Quit();
+        try {
+            this._target.Quit();
 
-        WinAX.release( this._target );
+            WinAX.release( this._target );
+
+        } catch (error) {
+
+            console.warn( error);
+        }
 
         this.emit('close');
     }
@@ -448,7 +414,7 @@ class Page extends EventEmitter {
      */
     async $(selector) {
 
-        return  Page.proxy( this.document.querySelector( selector ) );
+        return  Utility.proxyCOM( this.document.querySelector( selector ) );
     }
 
     /**
@@ -466,7 +432,7 @@ class Page extends EventEmitter {
         const length = list.length - 0, result = [ ];
 
         for (let i = 0;  i &lt; length;  i++)
-            result[i] = Page.proxy( list.item(i) );
+            result[i] = Utility.proxyCOM( list.item(i) );
 
         return result;
     }
@@ -491,20 +457,51 @@ class Page extends EventEmitter {
         return  Utility.waitFor(options.timeout,  () => this.$( selector ));
     }
 
+    static functionOf(expression, parameter) {
+
+        return  (expression instanceof Function) ?
+            `(${expression})(${
+                parameter.filter(
+                    value  =>  (value !== undefined)
+                ).map(
+                    item  =>  JSON.stringify( item )
+                )
+            })` :
+            `(function () { return ${expression}; })()`;
+    }
+
+    static wrapScript(key, expression, parameter) {
+
+        return  `setTimeout((function (sendBack) {
+
+            var result = ${Page.functionOf(expression, parameter)};
+
+            if (typeof (result || '').then  ===  'function')
+                result.then( sendBack );
+            else
+                sendBack( result );
+
+        }).bind(null,  function (data) {
+
+            self.name = 'PIE_${key}_' + (JSON.stringify( data )  ||  '');
+        }));`;
+    }
+
     /**
      * @param {function|string} expression - Function or Expression to be evaluated in the page context
      * @param {Serializable}    parameter  - Arguments to pass to the function
      *
      * @return {Promise&lt;Serializable>} Promise which resolves to the value of `expression`
      */
-    async evaluate(expression, ...parameter) {
+    evaluate(expression, ...parameter) {
 
-        expression = Page.wrapScript(expression, parameter);
+        const key = Date.now();
+
+        expression = Page.wrapScript(key, expression, parameter);
 
         try {
-            this.window.execScript(
-                `self.name = JSON.stringify(${ expression }) || ''`
-            );
+            this.window.execScript( expression );
+
         } catch (error) {
 
             console.warn( expression );
@@ -512,7 +509,21 @@ class Page extends EventEmitter {
             throw error;
         }
 
-        return  this.window.name  &amp;&amp;  JSON.parse( this.window.name );
+        return  Utility.waitFor(0,  () => {
+
+            var result = /PIE_(\d{13,})_([\s\S]*)/.exec( this.window.name );
+
+            if ((result || '')[1]  ==  key) {
+
+                this.window.name = '';
+
+                try {
+                    return  JSON.parse( result[2] );
+                } catch (error) {
+                    return  result[2];
+                }
+            }
+        },  true);
     }
 
     /**
@@ -671,9 +682,9 @@ class Page extends EventEmitter {
      */
     async evaluateHandle(expression, ...parameter) {
 
-        return Page.proxy(this.document.all(
+        return Utility.proxyCOM(this.document.all(
             await this.evaluate(
-                `${ Page.wrapScript(expression, parameter) }.sourceIndex`
+                `${ Page.functionOf(expression, parameter) }.sourceIndex`
             )
         ));
     }

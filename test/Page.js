@@ -89,28 +89,6 @@ describe('Page',  function () {
         });
     });
 
-    describe('Injection',  function () {
-
-        it('.prototype.addStyleTag()',  async function () {
-
-            await page.addStyleTag({
-                content:    'body { color: blue; }'
-            });
-
-            (await page.evaluate('self.getComputedStyle( document.body ).color'))
-                .should.be.equal('rgb(0, 0, 255)');
-        });
-
-        it('.prototype.addScriptTag()',  async function () {
-
-            await page.addScriptTag({
-                content:    'self.__test__ = "Test";'
-            });
-
-            (await page.evaluate('self.__test__')).should.be.equal('Test');
-        });
-    });
-
     describe('.prototype.evaluate()',  function () {
 
         it('Expression',  function () {
@@ -135,6 +113,44 @@ describe('Page',  function () {
                 return document.title + ' - ' + name + ' ' + version;
 
             }, 'IE', 11).should.be.fulfilledWith('Home - Documentation - IE 11');
+        });
+
+        it('Function returns Promise',  function () {
+
+            return  page.evaluate(function () {
+
+                return {
+                    then:    function (resolve) {
+
+                        setTimeout(function () {
+
+                            resolve('Async result');
+                        });
+                    }
+                };
+            }).should.be.fulfilledWith('Async result');
+        });
+    });
+
+    describe('Injection',  function () {
+
+        it('.prototype.addStyleTag()',  async function () {
+
+            await page.addStyleTag({
+                content:    'body { color: blue; }'
+            });
+
+            (await page.evaluate('self.getComputedStyle( document.body ).color'))
+                .should.be.equal('rgb(0, 0, 255)');
+        });
+
+        it('.prototype.addScriptTag()',  async function () {
+
+            await page.addScriptTag({
+                content:    'self.__test__ = "Test";'
+            });
+
+            (await page.evaluate('self.__test__')).should.be.equal('Test');
         });
     });
 
