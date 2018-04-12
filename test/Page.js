@@ -115,7 +115,12 @@ describe('Page',  function () {
             }, 'IE', 11).should.be.fulfilledWith('Home - Documentation - IE 11');
         });
 
-        it('Function returns Promise',  function () {
+        it('Sync error',  function () {
+
+            return  page.evaluate('test.error').should.be.rejectedWith( ReferenceError );
+        });
+
+        it('Function returns resolved Promise',  function () {
 
             return  page.evaluate(function () {
 
@@ -129,6 +134,24 @@ describe('Page',  function () {
                     }
                 };
             }).should.be.fulfilledWith('Async result');
+        });
+
+        it('Function returns rejected Promise',  function () {
+
+            return  page.evaluate(function () {
+
+                return {
+                    then:    function (resolve, reject) {
+
+                        setTimeout(function () {
+
+                            resolve('Async result');
+                        });
+
+                        reject(new EvalError('Async error'));
+                    }
+                };
+            }).should.be.rejectedWith(new EvalError('Async error'));
         });
     });
 

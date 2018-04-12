@@ -376,20 +376,30 @@ class Page extends EventEmitter {
 
     static wrapScript(key, expression, parameter, element) {
 
-        return  `setTimeout((function (sendBack) {
+        return  `setTimeout((function (resolve, reject) {
+            try {
+                var result = ${Page.functionOf(expression, parameter)};
 
-            var result = ${Page.functionOf(expression, parameter)};
+            } catch (error) {  return reject( error );  }
 
             if (typeof (result || '').then  ===  'function')
-                result.then( sendBack );
+                result.then(resolve, reject);
             else
-                sendBack( result );
+                resolve( result );
 
         }).bind(null,  function (data) {
 
-            self.name = 'PIE_${key}_' + (
+            self.name = 'PIE_${key}_R_'  +  (
                 JSON.stringify( data${element ? '.sourceIndex' : ''} )  ||  ''
             );
+        },  function (error) {
+
+            self.name = 'PIE_${key}_E_'  +  JSON.stringify({
+                name:           error.name,
+                code:           error.number & 0x0FFFF,
+                message:        error.message,
+                description:    error.description
+            });
         }));`;
     }
 
@@ -411,18 +421,32 @@ class Page extends EventEmitter {
 
         return  Utility.waitFor(0,  () => {
 
-            var result = /PIE_(\d{13,})_([\s\S]*)/.exec( this.window.name );
+            var result = /PIE_(\d{13,})_(R|E)_([\s\S]*)/.exec( this.window.name );
 
-            if ((result || '')[1]  ==  key) {
+            if ((result || '')[1]  !=  key)  return;
 
-                this.window.name = '';
+            this.window.name = '';
 
+            if (result[2] === 'R')
                 try {
-                    return  JSON.parse( result[2] );
+                    return  JSON.parse( result[3] );
                 } catch (error) {
-                    return  result[2];
+                    return  result[3];
                 }
-            }
+
+            result = JSON.parse( result[3] );
+
+            const error = global[ result.name ]( result.message );
+
+            if ( result.number )  error.number = result.number;
+
+            if ( result.description )  error.description = result.description;
+
+            /**
+             * @see {@link https://docs.microsoft.com/en-us/scripting/javascript/reference/javascript-run-time-errors}
+             */
+            throw error;
+
         },  true);
     }
 
@@ -552,7 +576,7 @@ class Page extends EventEmitter {
             var CSS;
 
             return {
-                then:    function (resolve, rejected) {
+                then:    function (resolve, reject) {
 
                     if (! url) {
                         CSS = document.createElement('style');
@@ -566,7 +590,7 @@ class Page extends EventEmitter {
 
                     CSS.rel = 'stylesheet',  CSS.href = url;
 
-                    CSS.onload = resolve.bind(null, CSS), CSS.onerror = rejected;
+                    CSS.onload = resolve.bind(null, CSS), CSS.onerror = reject;
 
                     document.head.appendChild( CSS );
                 }
@@ -594,13 +618,13 @@ class Page extends EventEmitter {
         return  this.evaluateHandle(function (content, url) {
 
             return {
-                then:    function (resolve, rejected) {
+                then:    function (resolve, reject) {
 
                     var JS = document.createElement('script');
 
                     JS[url ? 'src' : 'text'] = url || content;
 
-                    JS.onload = resolve.bind(null, JS), JS.onerror = rejected;
+                    JS.onload = resolve.bind(null, JS), JS.onerror = reject;
 
                     document.head.appendChild( JS );
                 }

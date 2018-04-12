@@ -17,8 +17,10 @@ exports.waitFor = function (timeOut = 30000,  filter,  notNull) {
                 return  filter  ?  reject(`Timeout - ${timeOut}ms`)  :  resolve();
 
             if ( filter ) {
+                try {
+                    var result = await filter();
 
-                let result = await filter();
+                } catch (error) {  return reject( error );  }
 
                 if ( notNull ) {
 
