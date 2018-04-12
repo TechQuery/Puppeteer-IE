@@ -367,16 +367,14 @@ class Page extends EventEmitter {
 
         return  (expression instanceof Function) ?
             `(${expression})(${
-                parameter.filter(
-                    value  =>  (value !== undefined)
-                ).map(
-                    item  =>  JSON.stringify( item )
+                parameter.map(
+                    item  =>  (item !== void 0)  ?  JSON.stringify( item )  :  'void 0'
                 )
             })` :
             `(function () { return ${expression}; })()`;
     }
 
-    static wrapScript(key, expression, parameter) {
+    static wrapScript(key, expression, parameter, element) {
 
         return  `setTimeout((function (sendBack) {
 
@@ -389,21 +387,17 @@ class Page extends EventEmitter {
 
         }).bind(null,  function (data) {
 
-            self.name = 'PIE_${key}_' + (JSON.stringify( data )  ||  '');
+            self.name = 'PIE_${key}_' + (
+                JSON.stringify( data${element ? '.sourceIndex' : ''} )  ||  ''
+            );
         }));`;
     }
 
-    /**
-     * @param {function|string} expression - Function or Expression to be evaluated in the page context
-     * @param {Serializable}    parameter  - Arguments to pass to the function
-     *
-     * @return {Promise<Serializable>} Promise which resolves to the value of `expression`
-     */
-    evaluate(expression, ...parameter) {
+    evaluateJS(expression, parameter, element) {
 
         const key = Date.now();
 
-        expression = Page.wrapScript(key, expression, parameter);
+        expression = Page.wrapScript(key, expression, parameter, element);
 
         try {
             this.window.execScript( expression );
@@ -430,6 +424,33 @@ class Page extends EventEmitter {
                 }
             }
         },  true);
+    }
+
+    /**
+     * If the function passed to the `page.evaluate` returns a `Promise`,
+     * then `page.evaluate` would wait for the promise to resolve and return its value.
+     *
+     * @param {function|string} expression - Function or Expression to be evaluated in the page context
+     * @param {Serializable}    parameter  - Arguments to pass to the function
+     *
+     * @return {Promise<Serializable>} Promise which resolves to the value of `expression`
+     */
+    evaluate(expression, ...parameter) {
+
+        return  this.evaluateJS(expression, parameter);
+    }
+
+    /**
+     * @param {function|string} expression - Function or Expression to be evaluated in the page context
+     * @param {Serializable}    parameter  - Arguments to pass to the function
+     *
+     * @return {Promise<ElementHandle>} Promise which resolves to the value of `expression` as **in-page Element**
+     */
+    async evaluateHandle(expression, ...parameter) {
+
+        return Utility.proxyCOM(this.document.all(
+            await this.evaluateJS(expression, parameter, true)
+        ));
     }
 
     /**
@@ -519,26 +540,38 @@ class Page extends EventEmitter {
      * @param {string} [options.url]     URL of the <link> tag
      * @param {string} [options.content] Raw CSS content to be injected into frame
      *
-     * @return {Promise} which resolves to the added tag when the stylesheet's onload fires
-     *                   or when the CSS content was injected into frame
+     * @return {Promise<ElementHandle>} which resolves to the added tag when the stylesheet's onload fires
+     *                                  or when the CSS content was injected into frame
      */
-    async addStyleTag({path, url, content}) {
+    addStyleTag({path, url, content}) {
 
-        if ( path )  url = Path.resolve( path );
+        if ( path )  url = 'file://' + Path.resolve( path );
 
-        var CSS;
+        return  this.evaluateHandle(function (content, url) {
 
-        if ( url ) {
-            CSS = this.document.createElement('link');
+            var CSS;
 
-            CSS.rel = 'stylesheet',  CSS.href = url;
-        } else {
-            CSS = this.document.createElement('style');
+            return {
+                then:    function (resolve, rejected) {
 
-            CSS.textContent = content;
-        }
+                    if (! url) {
+                        CSS = document.createElement('style');
 
-        this.document.head.appendChild( CSS );
+                        CSS.textContent = content;
+
+                        return  resolve( document.head.appendChild( CSS ) );
+                    }
+
+                    CSS = document.createElement('link');
+
+                    CSS.rel = 'stylesheet',  CSS.href = url;
+
+                    CSS.onload = resolve.bind(null, CSS), CSS.onerror = rejected;
+
+                    document.head.appendChild( CSS );
+                }
+            };
+        },  content,  url);
     }
 
     /**
@@ -551,18 +584,28 @@ class Page extends EventEmitter {
      * @param {string} [options.url]     URL of a script to be added
      * @param {string} [options.content] Raw JavaScript content to be injected into frame
      *
-     * @return {Promise} which resolves to the added tag when the script's onload fires
-     *                   or when the script content was injected into frame
+     * @return {Promise<ElementHandle>} which resolves to the added tag when the script's onload fires
+     *                                  or when the script content was injected into frame
      */
-    async addScriptTag({path, url, content}) {
+    addScriptTag({path, url, content}) {
 
-        if ( path )  url = Path.resolve( path );
+        if ( path )  url = 'file://' + Path.resolve( path );
 
-        var JS = this.document.createElement('script');
+        return  this.evaluateHandle(function (content, url) {
 
-        JS[url ? 'src' : 'text'] = url || content;
+            return {
+                then:    function (resolve, rejected) {
 
-        this.document.head.appendChild( JS );
+                    var JS = document.createElement('script');
+
+                    JS[url ? 'src' : 'text'] = url || content;
+
+                    JS.onload = resolve.bind(null, JS), JS.onerror = rejected;
+
+                    document.head.appendChild( JS );
+                }
+            };
+        },  content,  url);
     }
 
     /**
@@ -578,21 +621,6 @@ class Page extends EventEmitter {
     async focus(selector) {
 
         this.document.querySelector( selector ).focus();
-    }
-
-    /**
-     * @param {function|string} expression - Function or Expression to be evaluated in the page context
-     * @param {Serializable}    parameter  - Arguments to pass to the function
-     *
-     * @return {Promise<ElementHandle>} Promise which resolves to the value of `expression` as **in-page Element**
-     */
-    async evaluateHandle(expression, ...parameter) {
-
-        return Utility.proxyCOM(this.document.all(
-            await this.evaluate(
-                `${ Page.functionOf(expression, parameter) }.sourceIndex`
-            )
-        ));
     }
 
     async trigger(target,  type,  name,  ...parameter) {

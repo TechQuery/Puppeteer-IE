@@ -132,9 +132,9 @@ describe('Page',  function () {
         });
     });
 
-    describe('Injection',  function () {
+    describe('.prototype.addStyleTag()',  function () {
 
-        it('.prototype.addStyleTag()',  async function () {
+        it('Content',  async function () {
 
             await page.addStyleTag({
                 content:    'body { color: blue; }'
@@ -144,13 +144,42 @@ describe('Page',  function () {
                 .should.be.equal('rgb(0, 0, 255)');
         });
 
-        it('.prototype.addScriptTag()',  async function () {
+        it('URL',  async function () {
+
+            await page.addStyleTag({
+                url:    'https://cdn.bootcss.com/github-markdown-css/2.10.0/github-markdown.min.css'
+            });
+
+            (await page.evaluate(function () {
+
+                var article = document.querySelector('#main article');
+
+                article.className = 'markdown-body';
+
+                return  self.getComputedStyle( article.querySelector('h1') ).borderBottomWidth;
+
+            })).should.be.equal('1px');
+        });
+    });
+
+    describe('.prototype.addScriptTag()',  function () {
+
+        it('Content',  async function () {
 
             await page.addScriptTag({
                 content:    'self.__test__ = "Test";'
             });
 
             (await page.evaluate('self.__test__')).should.be.equal('Test');
+        });
+
+        it('URL',  async function () {
+
+            await page.addScriptTag({
+                url:    'https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js'
+            });
+
+            (await page.evaluate('typeof self.jQuery === "function"')).should.be.true();
         });
     });
 
