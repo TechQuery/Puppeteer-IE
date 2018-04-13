@@ -2,9 +2,9 @@
 
 const EventEmitter = require('events'), Path = require('path');
 
-const WinAX = require('winax'), Cookie = require('cookie');
+const WinAX = require('winax'), Cookie = require('cookie'), Utility = require('./utility');
 
-const Utility = require('./utility'), Mouse = require('./Mouse');
+const ExecutionContext = require('./ExecutionContext'), Mouse = require('./Mouse');
 
 
 /**
@@ -25,6 +25,8 @@ class Page extends EventEmitter {
         );
 
         IE.Visible = !headless,  IE.MenuBar = IE.StatusBar =  false;
+
+        this._context = new ExecutionContext( this );
 
         this.mouse = new Mouse( this );
     }
@@ -363,93 +365,6 @@ class Page extends EventEmitter {
         return  Utility.waitFor(options.timeout,  () => this.$( selector ));
     }
 
-    static functionOf(expression, parameter) {
-
-        return  (expression instanceof Function) ?
-            `(${expression})(${
-                parameter.map(
-                    item  =>  (item !== void 0)  ?  JSON.stringify( item )  :  'void 0'
-                )
-            })` :
-            `(function () { return ${expression}; })()`;
-    }
-
-    static wrapScript(key, expression, parameter, element) {
-
-        return  `setTimeout((function (resolve, reject) {
-            try {
-                var result = ${Page.functionOf(expression, parameter)};
-
-            } catch (error) {  return reject( error );  }
-
-            if (typeof (result || '').then  ===  'function')
-                result.then(resolve, reject);
-            else
-                resolve( result );
-
-        }).bind(null,  function (data) {
-
-            self.name = 'PIE_${key}_R_'  +  (
-                JSON.stringify( data${element ? '.sourceIndex' : ''} )  ||  ''
-            );
-        },  function (error) {
-
-            self.name = 'PIE_${key}_E_'  +  JSON.stringify({
-                name:           error.name,
-                code:           error.number & 0x0FFFF,
-                message:        error.message,
-                description:    error.description
-            });
-        }));`;
-    }
-
-    evaluateJS(expression, parameter, element) {
-
-        const key = Date.now();
-
-        expression = Page.wrapScript(key, expression, parameter, element);
-
-        try {
-            this.window.execScript( expression );
-
-        } catch (error) {
-
-            console.warn( expression );
-
-            throw error;
-        }
-
-        return  Utility.waitFor(0,  () => {
-
-            var result = /PIE_(\d{13,})_(R|E)_([\s\S]*)/.exec( this.window.name );
-
-            if ((result || '')[1]  !=  key)  return;
-
-            this.window.name = '';
-
-            if (result[2] === 'R')
-                try {
-                    return  JSON.parse( result[3] );
-                } catch (error) {
-                    return  result[3];
-                }
-
-            result = JSON.parse( result[3] );
-
-            const error = global[ result.name ]( result.message );
-
-            if ( result.number )  error.number = result.number;
-
-            if ( result.description )  error.description = result.description;
-
-            /**
-             * @see {@link https://docs.microsoft.com/en-us/scripting/javascript/reference/javascript-run-time-errors}
-             */
-            throw error;
-
-        },  true);
-    }
-
     /**
      * If the function passed to the `page.evaluate` returns a `Promise`,
      * then `page.evaluate` would wait for the promise to resolve and return its value.
@@ -461,7 +376,7 @@ class Page extends EventEmitter {
      */
     evaluate(expression, ...parameter) {
 
-        return  this.evaluateJS(expression, parameter);
+        return  this._context.evaluateJS(expression, parameter);
     }
 
     /**
@@ -473,7 +388,7 @@ class Page extends EventEmitter {
     async evaluateHandle(expression, ...parameter) {
 
         return Utility.proxyCOM(this.document.all(
-            await this.evaluateJS(expression, parameter, true)
+            await this._context.evaluateJS(expression, parameter, true)
         ));
     }
 
