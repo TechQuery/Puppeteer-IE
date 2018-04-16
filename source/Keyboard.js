@@ -14,9 +14,10 @@ class Keyboard {
     /** 
      * Dispatches a `keydown` event
      * 
-     * @param {DomString} [key]
+     * @param {DomString} [key]  'https://msdn.microsoft.com/en-us/expression/gg305568(v=vs.100)'
      * @param {object} [options]
-     * @param {string} [options.modifiersListArg=''] `ctrl`, `shift`, or `alt
+     * @param {unsigned long} [options.locationArg=0] 'https://msdn.microsoft.com/en-us/expression/ff974894(v=vs.100)'
+     * @param {string} [options.modifiersListArg=''] `Alt`, `AltGraph`, `CapsLock`, `Control`, `Meta`, `NumLock`, `Scroll`, `Shift`, `Win`
      * @param {boolean} [options.repeat=false]
      * @param {number} [options.locale='']       For trusted events, the locale property is set for keyboard and Input Method Editor (IME) input only.
      *
@@ -34,9 +35,10 @@ class Keyboard {
     /** 
      * Dispatches a `keypress` event
      * 
-     * @param {DomString} [key]
+     * @param {DomString} [key]  'https://msdn.microsoft.com/en-us/expression/gg305568(v=vs.100)'
      * @param {object} [options]
-     * @param {string} [options.modifiersListArg=''] `ctrl`, `shift`, or `alt
+     * @param {unsigned long} [options.locationArg=0] 'https://msdn.microsoft.com/en-us/expression/ff974894(v=vs.100)'
+     * @param {string} [options.modifiersListArg=''] `Alt`, `AltGraph`, `CapsLock`, `Control`, `Meta`, `NumLock`, `Scroll`, `Shift`, `Win`
      * @param {boolean} [options.repeat=true]
      * @param {number} [options.locale='']     For trusted events, the locale property is set for keyboard and Input Method Editor (IME) input only.
      *
@@ -54,10 +56,11 @@ class Keyboard {
     /** 
      * Dispatches a `keyup` event
      * 
-     * @param {DomString} [key]
+     * @param {DomString} [key]  'https://msdn.microsoft.com/en-us/expression/gg305568(v=vs.100)'
      * @param {object} [options]
-     * @param {string} [options.modifiersListArg=''] `ctrl`, `shift`, or `alt
-     * @param {boolean} [options.repeat=false]
+     * @param {unsigned long} [options.locationArg=0] 'https://msdn.microsoft.com/en-us/expression/ff974894(v=vs.100)'
+     * @param {string} [options.modifiersListArg=''] `Alt`, `AltGraph`, `CapsLock`, `Control`, `Meta`, `NumLock`, `Scroll`, `Shift`, `Win`
+     * @param {boolean} [options.repeat=false]  
      * @param {number} [options.locale='']     For trusted events, the locale property is set for keyboard and Input Method Editor (IME) input only.
      *
      * @return {Promise}
