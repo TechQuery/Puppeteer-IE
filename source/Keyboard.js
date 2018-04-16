@@ -10,32 +10,80 @@ class Keyboard {
         this._page = page;
         this._target = 'none';
     }
-
-    async down(key, options) {
-
+    
+    /** 
+     * Dispatches a `keydown` event
+     * 
+     * @param {DomString} [key]
+     * @param {object} [options]
+     * @param {string} [options.modifiersListArg=''] `ctrl`, `shift`, or `alt
+     * @param {boolean} [options.repeat=false]
+     * @param {number} [options.locale='']       For trusted events, the locale property is set for keyboard and Input Method Editor (IME) input only.
+     *
+     * @return {Promise}
+     */
+    async down(key, options = {
+        locationArg: 0,
+        modifiersListArg: '',
+        repeat: false,
+        locale: '',
+    }) {
+       return _trigger('down', true, true, options);
     }
     
-    async press(key, options) {
+    /** 
+     * Dispatches a `keypress` event
+     * 
+     * @param {DomString} [key]
+     * @param {object} [options]
+     * @param {string} [options.modifiersListArg=''] `ctrl`, `shift`, or `alt
+     * @param {boolean} [options.repeat=true]
+     * @param {number} [options.locale='']     For trusted events, the locale property is set for keyboard and Input Method Editor (IME) input only.
+     *
+     * @return {Promise}
+     */
+    async press(key, options = {
+        locationArg: 0,
+        modifiersListArg: '',
+        repeat: true,
+        locale: '',
+    }) {
+       return _trigger('press', true, true, options);
+    }
+
+    /** 
+     * Dispatches a `keyup` event
+     * 
+     * @param {DomString} [key]
+     * @param {object} [options]
+     * @param {string} [options.modifiersListArg=''] `ctrl`, `shift`, or `alt
+     * @param {boolean} [options.repeat=false]
+     * @param {number} [options.locale='']     For trusted events, the locale property is set for keyboard and Input Method Editor (IME) input only.
+     *
+     * @return {Promise}
+     */
+    async up(key, options = {
+        locationArg: 0,
+        modifiersListArg: '',
+        repeat: false,
+        locale: '',
+    }) {
+       return _trigger('up', true, true, options);
+    }
+
+    async sendCharacter(char) { //no repeat keypress?
 
     }
 
-    async sendCharacter(char) {
+    async type(text, options) {  // loop send charater?
 
     }
-
-    async type(text, options) {
-
-    }
-
-    async up(key) {
-
-    }
-
-    _trigger(name,  bubble,  cancel,  options = { }) {
+   
+    _trigger(name,  bubble,  cancel, key, options = { }) {
         return this._page.trigger(
             this._target,  'Keyboard',  'key' + name,
-            bubble,  cancel,  page.document.defaultView, options.char,
-            options.key, options.location, options.modifiersList, options.repeat
+            bubble,  cancel,  page.document.defaultView, key, 
+            options.location, options.modifiersList, options.repeat, options.locale
         );
     }
 }
