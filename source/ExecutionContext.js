@@ -1,6 +1,6 @@
 'use strict';
 
-const Utility = require('./utility');
+const FS = require('fs'), Path = require('path');
 
 
 class ExecutionContext {
@@ -8,79 +8,87 @@ class ExecutionContext {
     constructor(page) {
 
         this._page = page;
+
+        this._pending = { };
     }
 
-    static functionOf(expression, parameter) {
+    attach() {
 
-        return  (expression instanceof Function) ?
-            `(${expression})(${
-                parameter.map(
-                    item  =>  (item !== void 0)  ?  JSON.stringify( item )  :  'void 0'
-                )
-            })` :
-            `(function () { return ${expression}; })()`;
+        this._page.window.execScript(
+            FS.readFileSync(
+                Path.resolve(Path.dirname( module.id ),  'BrowserService.js'),
+                {encoding: 'utf-8'}
+            )
+        );
+
+        setInterval( this.readMessage.bind( this ) );
     }
 
-    static wrapScript(key, expression, parameter, element) {
+    static errorOf(data) {
 
-        return  `(function () {
+        const error = global[ data.name ]( data.message );
 
-    var status;
+        for (let key in data)
+            if (! error[ key ])  error[ key ] = data[ key ];
 
-    function sendBack(data) {
+        return error;
+    }
 
-        var type = 'R';
+    readMessage() {  /* eslint no-console: "off" */
 
-        if (data instanceof Error)
-            type = 'E',  data = {
-                name:           data.name,
-                code:           data.number & 0x0FFFF,
-                message:        data.message,
-                description:    data.description
-            };
+        const window = this._page.window;
 
-        setTimeout(function main() {
+        var data = /B_(\w)_(\d*)_([\s\S]*)/.exec( window.name );
 
-            if ( status )  return;
+        if (! data)  return;
 
-            status = type;
+        window.name = '';
 
-            if ( self.name )  return setTimeout( main );
+        const promise = this._pending[ data[2] ];
 
-            self.name = [
-                'PIE',  ${key},  type,  JSON.stringify( data ) || ''
-            ].join('_');
+        if ( data[3] )  try {
+
+            data[3] = JSON.parse( data[3] );
+
+        } catch (error) {  console.error( error );  }
+
+        switch ( data[1] ) {
+            case 'R':
+                if ( promise )  promise[0]( data[3] );
+                break;
+            case 'E':    {
+                let error = ExecutionContext.errorOf( data[3] );
+
+                if ( promise )
+                    promise[1]( error );
+                else
+                    this._page.emit('pageerror', error);
+
+                break;
+            }
+            case 'M':    if (data[3].source === 'console')
+                this._page.emit('console', data[3].data);
+        }
+    }
+
+    evaluate(expression, ...parameter) {
+
+        const key = Date.now();
+
+        const promise = new Promise((resolve, reject) => {
+
+            this._pending[ key ] = [resolve, reject];
         });
-    }
-
-    setTimeout((function (resolve, reject) {
-        try {
-            var result = ${ExecutionContext.functionOf(expression, parameter)};
-
-        } catch (error) {  return reject( error );  }
-
-        if (typeof (result || '').then  ===  'function')
-            result.then(resolve, reject);
-        else
-            resolve( result );
-
-    }).bind(null,  function (data) {
-
-        sendBack( data${element ? '.sourceIndex' : ''} );
-
-    },  sendBack));
-})()`;
-    }
-
-    evaluateJS(expression, parameter, element) {
-
-        const key = Date.now(), window = this._page.window;
-
-        expression = ExecutionContext.wrapScript(key, expression, parameter, element);
 
         try {
-            window.execScript( expression );
+            this._page.window.execScript(
+                `self.puppeteer.execute(${key}, ${
 
+                    (expression instanceof Function)  ?
+                        expression  :  JSON.stringify( expression )
+
+                }, ${JSON.stringify( parameter )})`
+            );
         } catch (error) {
 
             console.warn( expression );
@@ -88,35 +96,7 @@ class ExecutionContext {
             throw error;
         }
 
-        return  Utility.waitFor(0,  () => {
-
-            var result = /PIE_(\d{13,})_(R|E)_([\s\S]*)/.exec( window.name );
-
-            if ((result || '')[1]  !=  key)  return;
-
-            window.name = '';
-
-            if (result[2] === 'R')
-                try {
-                    return  JSON.parse( result[3] );
-                } catch (error) {
-                    return  result[3];
-                }
-
-            result = JSON.parse( result[3] );
-
-            const error = global[ result.name ]( result.message );
-
-            if ( result.number )  error.number = result.number;
-
-            if ( result.description )  error.description = result.description;
-
-            /**
-             * @see {@link https://docs.microsoft.com/en-us/scripting/javascript/reference/javascript-run-time-errors}
-             */
-            throw error;
-
-        },  true);
+        return promise;
     }
 }
 

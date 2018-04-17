@@ -124,34 +124,28 @@ describe('Page',  function () {
 
             return  page.evaluate(function () {
 
-                return {
-                    then:    function (resolve) {
+                return  new Promise(function (resolve) {
 
-                        setTimeout(function () {
-
-                            resolve('Async result');
-                        });
-                    }
-                };
+                    setTimeout( resolve.bind(null, 'Async result') );
+                });
             }).should.be.fulfilledWith('Async result');
         });
 
         it('Function returns rejected Promise',  function () {
 
+            const error = new EvalError('Async error');
+
+            error.code = 0;
+
             return  page.evaluate(function () {
 
-                return {
-                    then:    function (resolve, reject) {
+                return  new Promise(function (resolve, reject) {
 
-                        setTimeout(function () {
+                    setTimeout( resolve.bind(null, 'Async result') );
 
-                            resolve('Async result');
-                        });
-
-                        reject(new EvalError('Async error'));
-                    }
-                };
-            }).should.be.rejectedWith(new EvalError('Async error'));
+                    reject(new EvalError('Async error'));
+                });
+            }).should.be.rejectedWith( error );
         });
     });
 
@@ -165,6 +159,14 @@ describe('Page',  function () {
 
             (await page.evaluate('self.getComputedStyle( document.body ).color'))
                 .should.be.equal('rgb(0, 0, 255)');
+        });
+
+        it('Path',  async function () {
+
+            await page.addStyleTag({path: 'test/index.css'});
+
+            (await page.evaluate('self.getComputedStyle( document.body ).color'))
+                .should.be.equal('rgb(255, 0, 0)');
         });
 
         it('URL',  async function () {

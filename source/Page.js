@@ -1,6 +1,6 @@
 'use strict';
 
-const EventEmitter = require('events'), Path = require('path');
+const EventEmitter = require('events'), FS = require('fs');
 
 const WinAX = require('winax'), Cookie = require('cookie'), Utility = require('./utility');
 
@@ -47,11 +47,30 @@ class Page extends EventEmitter {
         return  this._target.LocationName + '';
     }
 
+    async setPatch() {
+
+        const window = this.window, polyfill = this.document.createElement('script');
+
+        polyfill.src = 'https://cdn.bootcss.com/es6-promise/4.1.1/es6-promise.auto.min.js';
+
+        this.document.head.appendChild( polyfill );
+
+        window.execScript(`setTimeout(function check() {
+
+            (self.name = (self.Promise instanceof Function))  ||  setTimeout( check );
+        })`);
+
+        await Utility.waitFor(()  =>  (window.name === 'true'));
+
+        window.name = '';
+
+        this._context.attach();
+    }
+
     /**
      * @param {object} [options]
      * @param {number} [options.timeout=30000] Maximum navigation time in milliseconds,
      *                                         pass 0 to disable timeout.
-     *
      * @emits Page#load
      */
     async waitForNavigation(options = {timeout: 30000}) {
@@ -60,6 +79,12 @@ class Page extends EventEmitter {
             options.timeout,
             ()  =>  this._target.Busy  &&  (this._target.Busy == false)
         );
+
+        this.document = Utility.proxyCOM( this._target.Document );
+
+        this.window = Utility.proxyCOM( this.document.defaultView );
+
+        await this.setPatch();
 
         this.emit('load');
     }
@@ -74,15 +99,11 @@ class Page extends EventEmitter {
      *
      * @return {Promise}
      */
-    async goto(url = 'about:blank',  options = {timeout: 30000, waitUntil: 'load'}) {
+    goto(url = 'about:blank',  options = {timeout: 30000, waitUntil: 'load'}) {
 
         this._target.Navigate( url );
 
-        await this.waitForNavigation( options );
-
-        this.document = Utility.proxyCOM( this._target.Document );
-
-        this.window = Utility.proxyCOM( this.document.defaultView );
+        return  this.waitForNavigation( options );
     }
 
     /**
@@ -146,10 +167,7 @@ class Page extends EventEmitter {
 
             WinAX.release( this._target );
 
-        } catch (error) {
-
-            console.warn( error);
-        }
+        } catch (error) {  console.warn( error );  }
 
         this.emit('close');
     }
@@ -376,7 +394,7 @@ class Page extends EventEmitter {
      */
     evaluate(expression, ...parameter) {
 
-        return  this._context.evaluateJS(expression, parameter);
+        return  this._context.evaluate(expression, ...parameter);
     }
 
     /**
@@ -388,7 +406,7 @@ class Page extends EventEmitter {
     async evaluateHandle(expression, ...parameter) {
 
         return Utility.proxyCOM(this.document.all(
-            await this._context.evaluateJS(expression, parameter, true)
+            await this._context.evaluate(expression, ...parameter)
         ));
     }
 
@@ -484,32 +502,31 @@ class Page extends EventEmitter {
      */
     addStyleTag({path, url, content}) {
 
-        if ( path )  url = 'file://' + Path.resolve( path );
+        if ( path )  content = FS.readFileSync(path,  {encoding: 'utf-8'});
 
         return  this.evaluateHandle(function (content, url) {
 
             var CSS;
 
-            return {
-                then:    function (resolve, reject) {
+            return  new Promise(function (resolve, reject) {
 
-                    if (! url) {
-                        CSS = document.createElement('style');
+                if (! url) {
 
-                        CSS.textContent = content;
+                    CSS = document.createElement('style');
 
-                        return  resolve( document.head.appendChild( CSS ) );
-                    }
+                    CSS.textContent = content;
 
-                    CSS = document.createElement('link');
-
-                    CSS.rel = 'stylesheet',  CSS.href = url;
-
-                    CSS.onload = resolve.bind(null, CSS), CSS.onerror = reject;
-
-                    document.head.appendChild( CSS );
+                    return  resolve( document.head.appendChild( CSS ) );
                 }
-            };
+
+                CSS = document.createElement('link');
+
+                CSS.onload = resolve.bind(null, CSS), CSS.onerror = reject;
+
+                CSS.rel = 'stylesheet',  CSS.href = url;
+
+                document.head.appendChild( CSS );
+            });
         },  content,  url);
     }
 
@@ -528,22 +545,20 @@ class Page extends EventEmitter {
      */
     addScriptTag({path, url, content}) {
 
-        if ( path )  url = 'file://' + Path.resolve( path );
+        if ( path )  content = FS.readFileSync(path,  {encoding: 'utf-8'});
 
         return  this.evaluateHandle(function (content, url) {
 
-            return {
-                then:    function (resolve, reject) {
+            var JS = document.createElement('script');
 
-                    var JS = document.createElement('script');
+            JS[url ? 'src' : 'text'] = url || content;
 
-                    JS[url ? 'src' : 'text'] = url || content;
+            return  new Promise(function (resolve, reject) {
 
-                    JS.onload = resolve.bind(null, JS), JS.onerror = reject;
+                JS.onload = resolve.bind(null, JS), JS.onerror = reject;
 
-                    document.head.appendChild( JS );
-                }
-            };
+                document.head.appendChild( JS );
+            });
         },  content,  url);
     }
 

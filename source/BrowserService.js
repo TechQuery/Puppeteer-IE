@@ -1,0 +1,107 @@
+(function () {
+
+    function Puppeteer() {
+
+        this.queue = [ ];
+
+        setInterval( this.sendMessage.bind( this ) );
+    }
+
+    var slice = Array.prototype.slice;
+
+    Puppeteer.prototype = {
+        constructor:    Puppeteer,
+        sendMessage:    function () {
+
+            if (self.name  ||  (! this.queue[0]))  return;
+
+            var message = this.queue.shift();
+
+            self.name = [
+                'B',
+                message.type,
+                message.key || '',
+                JSON.stringify( message.data ) || ''
+            ].join('_');
+        },
+        sendData:       function (key, data) {
+
+            if (arguments.length < 2)  data = key, key = '';
+
+            var type = key ? 'R' : 'M';
+
+            /**
+             * @see {@link https://docs.microsoft.com/en-us/scripting/javascript/reference/javascript-run-time-errors}
+             */
+            if (data instanceof Error)
+                type = 'E',  data = {
+                    name:            data.name,
+                    code:            data.number & 0x0FFFF,
+                    message:         data.message,
+                    description:     data.description,
+                    fileName:        data.fileName,
+                    lineNumber:      data.lineNumber,
+                    columnNumber:    data.columnNumber,
+                    stack:           data.stack
+                };
+            else if (data instanceof Element)
+                data = data.sourceIndex;
+
+            this.queue.push({
+                type:    type,
+                data:    data,
+                key:     key
+            });
+        },
+        execute:        function (key, code, parameter) {
+
+            var sendData = this.sendData.bind(this, key);
+
+            setTimeout(function () {
+                try {
+                    Promise.resolve(
+                        (code instanceof Function)  ?
+                            code.apply(null, parameter)  :  eval( code )
+                    ).then(
+                        sendData, sendData
+                    );
+                } catch (error) {  sendData( error );  }
+            });
+        }
+    };
+
+
+    self.puppeteer = new Puppeteer();
+
+    /* eslint no-console: "off" */
+
+    ['log', 'info', 'warn', 'error', 'dir'].forEach(function (key) {
+
+        var method = console[ key ];
+
+        console[ key ] = function () {
+
+            self.puppeteer.sendData({
+                source:    'console',
+                type:      key,
+                data:      slice.call( arguments )
+            });
+
+            return  method.apply(this, arguments);
+        };
+    });
+
+    //  Global error
+
+    self.onerror = function (message, URL, line, column, error) {
+
+        if (! (error instanceof Error)) {
+
+            error = new Error( message );
+
+            error.fileName = URL,  error.lineNumber = line,  error.columnNumber = column;
+        }
+
+        this.puppeteer.sendData( error );
+    };
+})();
