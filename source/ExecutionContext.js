@@ -3,16 +3,29 @@
 const FS = require('fs'), Path = require('path');
 
 
+class ConsoleMessage {
+
+    constructor(type, args) {
+
+        this._type = type,  this._args = args;
+    }
+
+    type() {  return  this._type;  }
+
+    args() {  return  this._args;  }
+}
+
+
 class ExecutionContext {
 
     constructor(page) {
 
-        this._page = page;
-
-        this._pending = { };
+        this._page = page,  this._pending = { },  this._export = { };
     }
 
     attach() {
+
+        if (this._interval != null)  clearInterval( this._interval );
 
         this._page.window.execScript(
             FS.readFileSync(
@@ -21,7 +34,10 @@ class ExecutionContext {
             )
         );
 
-        setInterval( this.readMessage.bind( this ) );
+        this._interval = setInterval( this.readMessage.bind( this ) );
+
+        for (let name  in  this._export)
+            this.expose(name,  this._export[ name ]);
     }
 
     static errorOf(data) {
@@ -34,7 +50,7 @@ class ExecutionContext {
         return error;
     }
 
-    readMessage() {  /* eslint no-console: "off" */
+    async readMessage() {
 
         const window = this._page.window;
 
@@ -66,8 +82,14 @@ class ExecutionContext {
 
                 break;
             }
-            case 'M':    if (data[3].source === 'console')
-                this._page.emit('console', data[3].data);
+            case 'M':
+                if (data[3].source === 'console')
+                    this._page.emit(
+                        'console',  new ConsoleMessage(data[3].type, data[3].data)
+                    );
+                break;
+            case 'C':
+                await this.execute(data[2], data[3]);
         }
     }
 
@@ -97,6 +119,33 @@ class ExecutionContext {
         }
 
         return promise;
+    }
+
+    async execute(key, data) {
+
+        const window = this._page.window;
+
+        try {
+            window.execScript(
+                `self.puppeteer.resolve(${key}, ${JSON.stringify(
+                    await this._export[ data.name ].apply(null,  data.parameter)
+                )})`
+            );
+        } catch (error) {
+
+            window.execScript(
+                `self.puppeteer.reject(${key},  new self['${error.name}'](
+                    ${JSON.stringify( error.message )}
+                ))`
+            );
+        }
+    }
+
+    expose(name, code) {
+
+        this._page.window.execScript( `self.puppeteer.define('${name}')` );
+
+        this._export[ name ] = code;
     }
 }
 

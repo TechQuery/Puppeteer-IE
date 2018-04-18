@@ -2,7 +2,7 @@
 
     function Puppeteer() {
 
-        this.queue = [ ];
+        this.queue = [ ],  this.stack = { };
 
         setInterval( this.sendMessage.bind( this ) );
     }
@@ -67,8 +67,43 @@
                     );
                 } catch (error) {  sendData( error );  }
             });
+        },
+        define:         function (name) {
+
+            var that = this;
+
+            self[ name ] = function () {
+
+                var parameter = slice.call( arguments );
+
+                return  new Promise(function () {
+
+                    parameter = {
+                        type:    'C',
+                        data:    {
+                            name:         name,
+                            parameter:    parameter
+                        },
+                        key:     Date.now()
+                    };
+
+                    that.queue.push( parameter );
+
+                    that.stack[ parameter.key ] = arguments;
+                });
+            };
         }
     };
+
+    ['resolve', 'reject'].forEach(function (name, index) {
+
+        Puppeteer.prototype[ name ] = function (key, data) {
+
+            this.stack[ key ][ index ]( data );
+
+            delete  this.stack[ key ];
+        };
+    });
 
 
     self.puppeteer = new Puppeteer();

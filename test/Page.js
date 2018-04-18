@@ -149,6 +149,22 @@ describe('Page',  function () {
         });
     });
 
+    it('Console event',  async () => {
+
+        var event = new Promise((resolve) => {
+
+            page.on('console', resolve);
+        });
+
+        await page.evaluate('console.log("test")');
+
+        event = await event;
+
+        event.type().should.be.equal('log');
+
+        event.args().should.be.eql( ['test'] );
+    });
+
     describe('.prototype.addStyleTag()',  function () {
 
         it('Content',  async function () {
@@ -230,6 +246,34 @@ describe('Page',  function () {
             }, null, end);
 
             Date.now().should.be.aboveOrEqual( end );
+        });
+    });
+
+    describe('.prototype.exposeFunction()',  () => {
+
+        it('Define & Use',  async () => {
+
+            const Crypto = require('crypto');
+
+            const MD5 = raw  =>  Crypto.createHash('md5').update( raw ).digest('hex');
+
+            await page.exposeFunction('MD5', MD5);
+
+            (await page.evaluate('self.MD5( location.href )')).should.be.equal(
+                MD5( page.url() )
+            );
+        });
+
+        it(
+            'Remote error',
+            ()  =>  page.evaluate('self.MD5()').should.be.rejectedWith( TypeError )
+        );
+
+        it('Reload & Redefine',  async () => {
+
+            await page.reload();
+
+            (await page.evaluate('self.MD5 instanceof Function')).should.be.true();
         });
     });
 

@@ -443,6 +443,20 @@ class Page extends EventEmitter {
     }
 
     /**
+     * The method adds a function called `name` on the page's window object.
+     *
+     * @param {string}   name              - Name of the function on the `window` object
+     * @param {function} puppeteerFunction - Callback function which will be called in Puppeteer's context,
+     *                                       if the function returns a Promise, it will be awaited.
+     *                                       (It survives navigations)
+     * @return {Promise} Promise which resolves to the return value of `puppeteerFunction`
+     */
+    async exposeFunction(name, puppeteerFunction) {
+
+        this._context.expose(name, puppeteerFunction);
+    }
+
+    /**
      * In the case of multiple pages in a single browser,
      * each page can have its own viewport size.
      *

@@ -56,6 +56,7 @@
                     <li data-type='method'><a href="Page.html#deleteCookie">deleteCookie</a></li>
                     <li data-type='method'><a href="Page.html#evaluate">evaluate</a></li>
                     <li data-type='method'><a href="Page.html#evaluateHandle">evaluateHandle</a></li>
+                    <li data-type='method'><a href="Page.html#exposeFunction">exposeFunction</a></li>
                     <li data-type='method'><a href="Page.html#focus">focus</a></li>
                     <li data-type='method'><a href="Page.html#goBack">goBack</a></li>
                     <li data-type='method'><a href="Page.html#goForward">goForward</a></li>
@@ -534,6 +535,20 @@ class Page extends EventEmitter {
         return this[`waitFor${
             (condition instanceof Function)  ?  'Function'  :  'Selector'
         }`](condition,  options || { },  ...parameter);
+    }
+
+    /**
+     * The method adds a function called `name` on the page's window object.
+     *
+     * @param {string}   name              - Name of the function on the `window` object
+     * @param {function} puppeteerFunction - Callback function which will be called in Puppeteer's context,
+     *                                       if the function returns a Promise, it will be awaited.
+     *                                       (It survives navigations)
+     * @return {Promise} Promise which resolves to the return value of `puppeteerFunction`
+     */
+    async exposeFunction(name, puppeteerFunction) {
+
+        this._context.expose(name, puppeteerFunction);
     }
 
     /**

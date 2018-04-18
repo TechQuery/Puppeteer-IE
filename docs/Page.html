@@ -56,6 +56,7 @@
                     <li data-type='method'><a href="Page.html#deleteCookie">deleteCookie</a></li>
                     <li data-type='method'><a href="Page.html#evaluate">evaluate</a></li>
                     <li data-type='method'><a href="Page.html#evaluateHandle">evaluateHandle</a></li>
+                    <li data-type='method'><a href="Page.html#exposeFunction">exposeFunction</a></li>
                     <li data-type='method'><a href="Page.html#focus">focus</a></li>
                     <li data-type='method'><a href="Page.html#goBack">goBack</a></li>
                     <li data-type='method'><a href="Page.html#goForward">goForward</a></li>
@@ -306,7 +307,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line546">line 546</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line560">line 560</a>
                             </li>
                         </ul>
                     </dd>
@@ -459,7 +460,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line503">line 503</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line517">line 517</a>
                             </li>
                         </ul>
                     </dd>
@@ -613,7 +614,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line740">line 740</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line754">line 754</a>
                             </li>
                         </ul>
                     </dd>
@@ -1311,6 +1312,91 @@
                     </dd>
                 </dl>
 
+                <h4 class="name" id="exposeFunction"><span class="type-signature">(async) </span>exposeFunction<span class="signature">(name, puppeteerFunction)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+
+                <dl class="details">
+
+                    <dt class="tag-source">Source:</dt>
+                    <dd class="tag-source">
+                        <ul class="dummy">
+                            <li>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line454">line 454</a>
+                            </li>
+                        </ul>
+                    </dd>
+
+                </dl>
+
+                <div class="description">
+                    <p>The method adds a function called <code>name</code> on the page's window object.</p>
+                </div>
+
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                    <thead>
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Type</th>
+
+                            <th class="last">Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td class="name"><code>name</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">string</span>
+
+                            </td>
+
+                            <td class="description last">
+                                <p>Name of the function on the <code>window</code> object</p>
+                            </td>
+                        </tr>
+
+                        <tr>
+
+                            <td class="name"><code>puppeteerFunction</code></td>
+
+                            <td class="type">
+
+                                <span class="param-type">function</span>
+
+                            </td>
+
+                            <td class="description last">
+                                <p>Callback function which will be called in Puppeteer's context,<br> if the function returns a Promise, it will be awaited.<br> (It survives navigations)</p>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h5>Returns:</h5>
+
+                <div class="param-desc">
+                    <p>Promise which resolves to the return value of <code>puppeteerFunction</code></p>
+                </div>
+
+                <dl class="param-type">
+                    <dt>
+        Type
+    </dt>
+                    <dd>
+
+                        <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
+                    </dd>
+                </dl>
+
                 <h4 class="name" id="focus"><span class="type-signature">(async) </span>focus<span class="signature">(selector)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
 
                 <dl class="details">
@@ -1319,7 +1405,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line575">line 575</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line589">line 589</a>
                             </li>
                         </ul>
                     </dd>
@@ -1868,7 +1954,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line709">line 709</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line723">line 723</a>
                             </li>
                         </ul>
                     </dd>
@@ -2085,7 +2171,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line615">line 615</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line629">line 629</a>
                             </li>
                         </ul>
                     </dd>
@@ -2492,7 +2578,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line455">line 455</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line469">line 469</a>
                             </li>
                         </ul>
                     </dd>
@@ -2648,7 +2734,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line654">line 654</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line668">line 668</a>
                             </li>
                         </ul>
                     </dd>
@@ -2837,7 +2923,7 @@
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line470">line 470</a>
+                                <a href="Page.js.html">Page.js</a>, <a href="Page.js.html#line484">line 484</a>
                             </li>
                         </ul>
                     </dd>
