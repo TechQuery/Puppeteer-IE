@@ -2,7 +2,7 @@
 
 require('should');
 
-const Page = require('../source/Page');
+const Page = require('../source/Page'), Crypto = require('crypto'), FS = require('fs');
 
 const page = new Page(
     process.env.npm_config_argv.indexOf('--inspect')  <  0
@@ -14,27 +14,27 @@ for (let event  of  ['uncaughtException', 'unhandledRejection', 'SIGINT', 'exit'
     process.on(event, exit);
 
 
-describe('Page',  function () {
+describe('Page',  () => {
 
     before( page.goto.bind(page,  process.env.npm_package_homepage) );
 
 
-    describe('Property',  function () {
+    describe('Property',  () => {
 
-        it('Title',  function () {
+        it('Title',  () => {
 
             return  page.title().should.be.fulfilledWith('Home - Documentation');
         });
 
-        it('URL',  function () {
+        it('URL',  () => {
 
             page.url().should.be.equal( process.env.npm_package_homepage );
         });
     });
 
-    describe('Cookie',  function () {
+    describe('Cookie',  () => {
 
-        it('.prototype.setCookie()',  async function () {
+        it('.prototype.setCookie()',  async () => {
 
             await page.setCookie(
                 {name: 'test', value: 'test'},
@@ -47,7 +47,7 @@ describe('Page',  function () {
                 .should.be.eql('test');
         });
 
-        it('.prototype.deleteCookie()',  async function () {
+        it('.prototype.deleteCookie()',  async () => {
 
             await page.deleteCookie({name: 'test'});
 
@@ -60,14 +60,14 @@ describe('Page',  function () {
         });
     });
 
-    describe('Selector',  function () {
+    describe('Selector',  () => {
 
-        it('.prototype.$()',  async function () {
+        it('.prototype.$()',  async () => {
 
             (await page.$('a')).textContent.should.be.equal('Home');
         });
 
-        it('.prototype.$$()',  async function () {
+        it('.prototype.$$()',  async () => {
 
             const list = (await page.$$('h2 a')).map(link => link.textContent);
 
@@ -75,7 +75,7 @@ describe('Page',  function () {
         });
     });
 
-    it('Viewport',  async function () {
+    it('Viewport',  async () => {
 
         await page.setViewport({width: 1024,  height: 768});
 
@@ -89,15 +89,15 @@ describe('Page',  function () {
         });
     });
 
-    describe('.prototype.evaluate()',  function () {
+    describe('.prototype.evaluate()',  () => {
 
-        it('Expression',  function () {
+        it('Expression',  () => {
 
             return page.evaluate('document.title')
                 .should.be.fulfilledWith('Home - Documentation');
         });
 
-        it('Function',  function () {
+        it('Function',  () => {
 
             return page.evaluate(function () {
 
@@ -106,7 +106,7 @@ describe('Page',  function () {
             }).should.be.fulfilledWith('Home - Documentation');
         });
 
-        it('Function with parameter',  function () {
+        it('Function with parameter',  () => {
 
             return page.evaluate(function (name, version) {
 
@@ -115,12 +115,12 @@ describe('Page',  function () {
             }, 'IE', 11).should.be.fulfilledWith('Home - Documentation - IE 11');
         });
 
-        it('Sync error',  function () {
+        it('Sync error',  () => {
 
             return  page.evaluate('test.error').should.be.rejectedWith( ReferenceError );
         });
 
-        it('Function returns resolved Promise',  function () {
+        it('Function returns resolved Promise',  () => {
 
             return  page.evaluate(function () {
 
@@ -131,7 +131,7 @@ describe('Page',  function () {
             }).should.be.fulfilledWith('Async result');
         });
 
-        it('Function returns rejected Promise',  function () {
+        it('Function returns rejected Promise',  () => {
 
             const error = new EvalError('Async error');
 
@@ -165,9 +165,9 @@ describe('Page',  function () {
         event.args().should.be.eql( ['test'] );
     });
 
-    describe('.prototype.addStyleTag()',  function () {
+    describe('.prototype.addStyleTag()',  () => {
 
-        it('Content',  async function () {
+        it('Content',  async () => {
 
             await page.addStyleTag({
                 content:    'body { color: blue; }'
@@ -177,7 +177,7 @@ describe('Page',  function () {
                 .should.be.equal('rgb(0, 0, 255)');
         });
 
-        it('Path',  async function () {
+        it('Path',  async () => {
 
             await page.addStyleTag({path: 'test/index.css'});
 
@@ -185,7 +185,7 @@ describe('Page',  function () {
                 .should.be.equal('rgb(255, 0, 0)');
         });
 
-        it('URL',  async function () {
+        it('URL',  async () => {
 
             await page.addStyleTag({
                 url:    'https://cdn.bootcss.com/github-markdown-css/2.10.0/github-markdown.min.css'
@@ -203,9 +203,9 @@ describe('Page',  function () {
         });
     });
 
-    describe('.prototype.addScriptTag()',  function () {
+    describe('.prototype.addScriptTag()',  () => {
 
-        it('Content',  async function () {
+        it('Content',  async () => {
 
             await page.addScriptTag({
                 content:    'self.__test__ = "Test";'
@@ -214,7 +214,7 @@ describe('Page',  function () {
             (await page.evaluate('self.__test__')).should.be.equal('Test');
         });
 
-        it('URL',  async function () {
+        it('URL',  async () => {
 
             await page.addScriptTag({
                 url:    'https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js'
@@ -224,9 +224,9 @@ describe('Page',  function () {
         });
     });
 
-    describe('.prototype.waitFor()',  function () {
+    describe('.prototype.waitFor()',  () => {
 
-        it('Number',  async function () {
+        it('Number',  async () => {
 
             const start = Date.now();
 
@@ -235,7 +235,7 @@ describe('Page',  function () {
             Date.now().should.be.aboveOrEqual(start + 500);
         });
 
-        it('Function',  async function () {
+        it('Function',  async () => {
 
             const end = Date.now() + 500;
 
@@ -252,8 +252,6 @@ describe('Page',  function () {
     describe('.prototype.exposeFunction()',  () => {
 
         it('Define & Use',  async () => {
-
-            const Crypto = require('crypto');
 
             const MD5 = raw  =>  Crypto.createHash('md5').update( raw ).digest('hex');
 
@@ -277,16 +275,16 @@ describe('Page',  function () {
         });
     });
 
-    describe('Event',  function () {
+    describe('Event',  () => {
 
-        it('.prototype.focus()',  async function () {
+        it('.prototype.focus()',  async () => {
 
             await page.focus('a');
 
             (await page.evaluate('document.activeElement.textContent')).should.be.equal('Home');
         });
 
-        it('.prototype.select()',  async function () {
+        it('.prototype.select()',  async () => {
 
             await page.evaluate(function (HTML) {
 
@@ -305,7 +303,7 @@ describe('Page',  function () {
                 .should.be.eql(['1', '2']);
         });
 
-        it('.prototype.click()',  async function () {
+        it('.prototype.click()',  async () => {
 
             await page.click('a');
 
@@ -314,7 +312,7 @@ describe('Page',  function () {
             page.url().should.be.equal(process.env.npm_package_homepage  +  'index.html');
         });
 
-        it('.prototype.type()',  async function () {
+        it('.prototype.type()',  async () => {
 
             const input = await page.$('h1');
 
@@ -326,27 +324,40 @@ describe('Page',  function () {
         });
     });
 
-    describe('Navigator',  function () {
+    describe('Navigator',  () => {
 
-        it('.prototype.reload()',  async function () {
+        it('.prototype.reload()',  async () => {
 
             await page.reload();
 
             (await page.$('h1')).innerText.should.be.equal('Puppeteer-IE');
         });
 
-        it('.prototype.goBack()',  async function () {
+        it('.prototype.goBack()',  async () => {
 
             await page.goBack();
 
             page.url().should.be.equal( process.env.npm_package_homepage );
         });
 
-        it('.prototype.goForward()',  async function () {
+        it('.prototype.goForward()',  async () => {
 
             await page.goForward();
 
             page.url().should.be.equal(process.env.npm_package_homepage  +  'index.html');
         });
+    });
+
+    it('.prototype.screenshot()',  async () => {
+
+        const path = 'test/temp.png';
+
+        if (FS.existsSync( path ))  FS.unlinkSync( path );
+
+        const buffer = await page.screenshot({ path });
+
+        buffer.length.should.be.greaterThan( 0 );
+
+        FS.readFileSync( path ).length.should.be.greaterThan( 0 );
     });
 });

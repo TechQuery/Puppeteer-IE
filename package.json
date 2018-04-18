@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-ie",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "descripton": "Headless Internet Explorer NodeJS API inspired by Puppeteer.",
   "keywords": [
     "internet-explorer",

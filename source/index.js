@@ -5,8 +5,7 @@
  *
  * @typedef {number|boolean|string|object|array} Serializable
  *
- * @see     {@link
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description|Promise}
+ * @see     {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description|Promise}
  */
 
 /**
@@ -23,6 +22,14 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects
  * @typedef {EventEmitter} EventEmitter
  *
  * @see {@link https://nodejs.org/dist/latest-v6.x/docs/api/events.html#events_class_eventemitter|Node.JS - Event module}
+ */
+
+/**
+ * Binary buffer
+ *
+ * @typedef {Buffer} Buffer
+ *
+ * @see {@link https://nodejs.org/dist/latest-v6.x/docs/api/buffer.html#buffer_buffer|Node.JS - Buffer}
  */
 
 const Browser = require('./Browser'), stack = [ ];

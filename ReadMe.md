@@ -35,8 +35,16 @@ Only change the Package Name, and then do as [Puppeteer does](https://github.com
 
 
 
+## Development
+
+[Contributor guide](https://github.com/TechQuery/Puppeteer-IE/blob/master/Contributing.md)
+
+
+
 ## Acknowledgement
 
  1. [Puppeteer](https://github.com/GoogleChrome/puppeteer)
 
  2. [Node-ActiveX](https://github.com/durs/node-activex)
+
+ 3. [HTML2Canvas](http://html2canvas.hertzen.com/)

@@ -1,6 +1,6 @@
 'use strict';
 
-const EventEmitter = require('events'), FS = require('fs');
+const EventEmitter = require('events'), FS = require('fs'), Path = require('path');
 
 const WinAX = require('winax'), Cookie = require('cookie'), Utility = require('./utility');
 
@@ -29,6 +29,8 @@ class Page extends EventEmitter {
         this._context = new ExecutionContext( this );
 
         this.mouse = new Mouse( this );
+
+        this._renderer = null;
     }
 
     /**
@@ -762,6 +764,73 @@ class Page extends EventEmitter {
         await this.mouse.click(center[0], center[1], options);
 
         target.click();
+    }
+
+    /**
+     * @param {object}  [options]
+     * @param {string}  [options.type="png"]           Specify screenshot type, can be either `jpeg` or `png`.
+     * @param {string}  [options.path]                 The file path to save the image to.
+     *                                                 The screenshot type will be inferred from file extension.
+     *                                                 If path is a relative path,
+     *                                                 then it is resolved relative to current working directory.
+     *                                                 If no path is provided, the image won't be saved to the disk.
+     * @param {boolean} [options.fullPage=false]       When true, takes a screenshot of the full scrollable page
+     * @param {boolean} [options.omitBackground=false] Hides default white background
+     *                                                 and allows capturing screenshots with transparency.
+     * @param {object}  [options.clip]                 An object which specifies clipping region of the page
+     * @param {number}  [options.clip.x]               X-coordinate of top-left corner of clip area
+     * @param {number}  [options.clip.y]               Y-coordinate of top-left corner of clip area
+     * @param {number}  [options.clip.width]           Width of clipping area
+     * @param {number}  [options.clip.height]          Height of clipping area
+     * @param {number}  [options.quality]              The quality of the image, between 0-100.
+     *                                                 Not applicable to png images.
+     * @return {Promise<Buffer>} Promise which resolves to buffer with captured screenshot
+     */
+    async screenshot(options = {type: 'png', fullPage: false, omitBackground: false}) {
+
+        if (! this._renderer) {
+
+            await this.addScriptTag({
+                url:    'https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.min.js'
+            });
+
+            this._renderer = true;
+        }
+
+        if ( options.path )  options.type = Path.extname( options.path );
+
+        var image = await this.evaluate(
+            function (type, quality, fullPage, options) {
+
+                if (type === 'jpg')  type = 'jpeg';
+
+                var box = document.documentElement;
+
+                if (! fullPage)
+                    options.x = box.scrollLeft, options.y = box.scrollTop,
+                    options.width = self.innerWidth, options.height = self.innerHeight;
+
+                return self.html2canvas(
+                    document.documentElement, options
+                ).then(function (canvas) {
+
+                    return  canvas.toDataURL('image/' + type,  quality / 100);
+                });
+            },
+            options.type,
+            options.quality,
+            options.fullPage,
+            Object.assign({
+                backgroundColor:    options.omitBackground ? null : '#FFF',
+                useCORS:            true
+            },  options.clip)
+        );
+
+        image = Buffer.from(image.split(',')[1], 'base64');
+
+        if ( options.path )  FS.writeFileSync(options.path, image);
+
+        return image;
     }
 }
 
