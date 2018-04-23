@@ -35,6 +35,16 @@ Only change the Package Name, and then do as [Puppeteer does](https://github.com
 
 
 
+## Known issue
+
+ 1. *Loading pages* of IE will be blocked if a *Web server* running in the same *NodeJS process*
+
+ 2. *Loading pages* from `localhost` will lost the `window` object in *NodeJS process*
+
+For the above reasons, I recommend using [KoApache](https://www.npmjs.com/package/koapache) to host your Web pages for testing or other things.
+
+
+
 ## Development
 
 [Contributor guide](https://github.com/TechQuery/Puppeteer-IE/blob/master/Contributing.md)

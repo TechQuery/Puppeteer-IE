@@ -41,32 +41,26 @@ class Page extends EventEmitter {
         return  this._target.LocationURL + '';
     }
 
-    /**
-     * @return {Promise<string>}
-     */
-    async title() {
+    async require(module, file, namespace) {
 
-        return  this._target.LocationName + '';
-    }
+        const window = this.window;
 
-    async setPatch() {
-
-        const window = this.window, polyfill = this.document.createElement('script');
-
-        polyfill.src = 'https://cdn.bootcss.com/es6-promise/4.1.1/es6-promise.auto.min.js';
-
-        this.document.head.appendChild( polyfill );
+        window.execScript(
+            FS.readFileSync(
+                require.resolve(`${module}/dist/${file || module}.min`),
+                {encoding: 'utf-8'}
+            )
+        );
 
         window.execScript(`setTimeout(function check() {
 
-            (self.name = (self.Promise instanceof Function))  ||  setTimeout( check );
+            (self.name = (self.${namespace || module} instanceof Object))  ||
+                setTimeout( check );
         })`);
 
         await Utility.waitFor(()  =>  (window.name === 'true'));
 
         window.name = '';
-
-        this._context.attach();
     }
 
     /**
@@ -86,9 +80,21 @@ class Page extends EventEmitter {
 
         this.window = Utility.proxyCOM( this.document.defaultView );
 
-        await this.setPatch();
+        await this.require('es6-promise', 'es6-promise.auto', 'Promise');
+
+        this._context.attach();
 
         this.emit('load');
+    }
+
+    /**
+     * @return {Promise<string>}
+     */
+    async title() {
+
+        await this.waitForNavigation();
+
+        return  this._target.LocationName + '';
     }
 
     /**
@@ -790,9 +796,7 @@ class Page extends EventEmitter {
 
         if (! this._renderer) {
 
-            await this.addScriptTag({
-                url:    'https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.min.js'
-            });
+            await this.require('html2canvas');
 
             this._renderer = true;
         }

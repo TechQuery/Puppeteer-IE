@@ -1,14 +1,14 @@
 'use strict';
 
-require('should');
+const Crypto = require('crypto'), FS = require('fs');    require('should');
 
-const Page = require('../source/Page'), Crypto = require('crypto'), FS = require('fs');
+const Page = require('../source/Page'), WebServer = require('koapache');
 
 const page = new Page(
     process.env.npm_config_argv.indexOf('--inspect')  <  0
 );
 
-const exit = page.close.bind( page );
+var exit = page.close.bind( page ), URL_root;
 
 for (let event  of  ['uncaughtException', 'unhandledRejection', 'SIGINT', 'exit'])
     process.on(event, exit);
@@ -16,7 +16,14 @@ for (let event  of  ['uncaughtException', 'unhandledRejection', 'SIGINT', 'exit'
 
 describe('Page',  () => {
 
-    before( page.goto.bind(page,  process.env.npm_package_homepage) );
+    before(async () => {
+
+        URL_root = await WebServer('./docs/');
+
+        URL_root = `http://${URL_root.address}:${URL_root.port}/`;
+
+        await page.goto( URL_root );
+    });
 
 
     describe('Property',  () => {
@@ -28,7 +35,7 @@ describe('Page',  () => {
 
         it('URL',  () => {
 
-            page.url().should.be.equal( process.env.npm_package_homepage );
+            page.url().should.be.equal( URL_root );
         });
     });
 
@@ -309,7 +316,7 @@ describe('Page',  () => {
 
             await page.waitForNavigation();
 
-            page.url().should.be.equal(process.env.npm_package_homepage  +  'index.html');
+            page.url().should.be.equal(URL_root  +  'index.html');
         });
 
         it('.prototype.type()',  async () => {
@@ -337,14 +344,14 @@ describe('Page',  () => {
 
             await page.goBack();
 
-            page.url().should.be.equal( process.env.npm_package_homepage );
+            page.url().should.be.equal( URL_root );
         });
 
         it('.prototype.goForward()',  async () => {
 
             await page.goForward();
 
-            page.url().should.be.equal(process.env.npm_package_homepage  +  'index.html');
+            page.url().should.be.equal(URL_root  +  'index.html');
         });
     });
 
