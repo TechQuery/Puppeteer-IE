@@ -1,6 +1,8 @@
 'use strict';
 
-const FS = require('fs'), Path = require('path');
+const FS = require('fs'), Path = require('path'), babel = require('babel-core');
+
+const Utility = require('./utility');
 
 
 class ConsoleMessage {
@@ -23,7 +25,31 @@ class ExecutionContext {
         this._page = page,  this._pending = { },  this._export = { };
     }
 
-    attach() {
+    async require(module, file, namespace) {
+
+        const window = this._page.window;
+
+        window.execScript(
+            FS.readFileSync(
+                require.resolve(`${module}/dist/${file || module}.min`),
+                {encoding: 'utf-8'}
+            )
+        );
+
+        window.execScript(`setTimeout(function check() {
+
+            (self.name = (self.${namespace || module} instanceof Object))  ||
+                setTimeout( check );
+        })`);
+
+        await Utility.waitFor(()  =>  (window.name === 'true'));
+
+        window.name = '';
+    }
+
+    async attach() {
+
+        await this.require('babel-polyfill', 'polyfill', 'Promise');
 
         if (this._interval != null)  clearInterval( this._interval );
 
@@ -93,6 +119,16 @@ class ExecutionContext {
         }
     }
 
+    static toES5(code) {
+
+        return  babel.transform(code, {
+            presets:    ['es2015', 'es2016', 'es2017'],
+            ast:        false
+        }).code.replace(
+            /(?:'|")use strict(?:'|");\s*\(([\s\S]+)\);/, '$1'
+        );
+    }
+
     evaluate(expression, ...parameter) {
 
         const key = Date.now();
@@ -102,14 +138,16 @@ class ExecutionContext {
             this._pending[ key ] = [resolve, reject];
         });
 
+        if (expression instanceof Function)
+            expression = ExecutionContext.toES5(`(${ expression })`);
+        else
+            expression = JSON.stringify( ExecutionContext.toES5( expression ) );
+
         try {
             this._page.window.execScript(
-                `self.puppeteer.execute(${key}, ${
-
-                    (expression instanceof Function)  ?
-                        expression  :  JSON.stringify( expression )
-
-                }, ${JSON.stringify( parameter )})`
+                `self.puppeteer.execute(
+                    ${key}, ${expression}, ${JSON.stringify( parameter )}
+                )`
             );
         } catch (error) {
 

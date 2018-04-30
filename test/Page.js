@@ -106,20 +106,17 @@ describe('Page',  () => {
 
         it('Function',  () => {
 
-            return page.evaluate(function () {
-
-                return document.title;
-
-            }).should.be.fulfilledWith('Home - Documentation');
+            return page.evaluate(() => document.title)
+                .should.be.fulfilledWith('Home - Documentation');
         });
 
         it('Function with parameter',  () => {
 
-            return page.evaluate(function (name, version) {
-
-                return document.title + ' - ' + name + ' ' + version;
-
-            }, 'IE', 11).should.be.fulfilledWith('Home - Documentation - IE 11');
+            return page.evaluate(
+                (name, version)  =>  document.title + ' - ' + name + ' ' + version,
+                'IE',
+                11
+            ).should.be.fulfilledWith('Home - Documentation - IE 11');
         });
 
         it('Sync error',  () => {
@@ -129,13 +126,11 @@ describe('Page',  () => {
 
         it('Function returns resolved Promise',  () => {
 
-            return  page.evaluate(function () {
-
-                return  new Promise(function (resolve) {
-
-                    setTimeout( resolve.bind(null, 'Async result') );
-                });
-            }).should.be.fulfilledWith('Async result');
+            return  page.evaluate(
+                ()  =>  new Promise(
+                    resolve  =>  setTimeout( resolve.bind(null, 'Async result') )
+                )
+            ).should.be.fulfilledWith('Async result');
         });
 
         it('Function returns rejected Promise',  () => {
@@ -144,15 +139,14 @@ describe('Page',  () => {
 
             error.code = 0;
 
-            return  page.evaluate(function () {
-
-                return  new Promise(function (resolve, reject) {
+            return  page.evaluate(
+                ()  =>  new Promise((resolve, reject)  =>  {
 
                     setTimeout( resolve.bind(null, 'Async result') );
 
                     reject(new EvalError('Async error'));
-                });
-            }).should.be.rejectedWith( error );
+                })
+            ).should.be.rejectedWith( error );
         });
     });
 
@@ -198,7 +192,7 @@ describe('Page',  () => {
                 url:    'https://cdn.bootcss.com/github-markdown-css/2.10.0/github-markdown.min.css'
             });
 
-            (await page.evaluate(function () {
+            (await page.evaluate(() => {
 
                 var article = document.querySelector('#main article');
 
@@ -293,16 +287,14 @@ describe('Page',  () => {
 
         it('.prototype.select()',  async () => {
 
-            await page.evaluate(function (HTML) {
-
-                document.querySelector('article').innerHTML = HTML;
-            }, `
-                <select multiple>
+            await page.evaluate(
+                HTML  =>  document.querySelector('article').innerHTML = HTML,
+                `<select multiple>
                     <option>0</option>
                     <option>1</option>
                     <option>2</option>
-                </select>
-            `);
+                </select>`
+            );
 
             (await page.select('select', '1', '2', '3')).should.be.eql(['1', '2']);
 

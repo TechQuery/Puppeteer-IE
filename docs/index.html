@@ -107,6 +107,16 @@
                 <p>Only change the Package Name, and then do as <a href="https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md">Puppeteer does</a>.</p>
                 <p><strong>[ Recommendation ]</strong> Use <a href="https://github.com/segmentio/daydream">DayDream</a> to record operation scripts in <a href="https://www.google.com/chrome/">Google Chrome</a>.</p>
                 <p><strong>API document</strong> accesses from https://techquery.github.io/Puppeteer-IE/ or <code>npm run help</code>.</p>
+                <h2>Known issue</h2>
+                <ol>
+                    <li>
+                        <p><em>Loading pages</em> of IE will be blocked if a <em>Web server</em> running in the same <em>NodeJS process</em></p>
+                    </li>
+                    <li>
+                        <p><em>Loading pages</em> from <code>localhost</code> will lost the <code>window</code> object in <em>NodeJS process</em></p>
+                    </li>
+                </ol>
+                <p>For the above reasons, I recommend using <a href="https://www.npmjs.com/package/koapache">KoApache</a> to <a href="https://github.com/TechQuery/Puppeteer-IE/blob/master/test/Page.js#L19">host your Web pages for testing</a> or other things.</p>
                 <h2>Development</h2>
                 <p><a href="https://github.com/TechQuery/Puppeteer-IE/blob/master/Contributing.md">Contributor guide</a></p>
                 <h2>Acknowledgement</h2>

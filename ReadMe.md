@@ -41,7 +41,7 @@ Only change the Package Name, and then do as [Puppeteer does](https://github.com
 
  2. *Loading pages* from `localhost` will lost the `window` object in *NodeJS process*
 
-For the above reasons, I recommend using [KoApache](https://www.npmjs.com/package/koapache) to host your Web pages for testing or other things.
+For the above reasons, I recommend using [KoApache](https://www.npmjs.com/package/koapache) to [host your Web pages for testing](https://github.com/TechQuery/Puppeteer-IE/blob/master/test/Page.js#L19) or other things.
 
 
 

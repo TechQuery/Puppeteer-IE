@@ -41,28 +41,6 @@ class Page extends EventEmitter {
         return  this._target.LocationURL + '';
     }
 
-    async require(module, file, namespace) {
-
-        const window = this.window;
-
-        window.execScript(
-            FS.readFileSync(
-                require.resolve(`${module}/dist/${file || module}.min`),
-                {encoding: 'utf-8'}
-            )
-        );
-
-        window.execScript(`setTimeout(function check() {
-
-            (self.name = (self.${namespace || module} instanceof Object))  ||
-                setTimeout( check );
-        })`);
-
-        await Utility.waitFor(()  =>  (window.name === 'true'));
-
-        window.name = '';
-    }
-
     /**
      * @param {object} [options]
      * @param {number} [options.timeout=30000] Maximum navigation time in milliseconds,
@@ -80,9 +58,7 @@ class Page extends EventEmitter {
 
         this.window = Utility.proxyCOM( this.document.defaultView );
 
-        await this.require('es6-promise', 'es6-promise.auto', 'Promise');
-
-        this._context.attach();
+        await this._context.attach();
 
         this.emit('load');
     }
@@ -92,7 +68,7 @@ class Page extends EventEmitter {
      */
     async title() {
 
-        await this.waitForNavigation();
+        if (! this.document)  await this.waitForNavigation();
 
         return  this._target.LocationName + '';
     }
@@ -476,13 +452,14 @@ class Page extends EventEmitter {
      */
     setViewport({width, height}) {
 
-        return  this.evaluate(function (width, height) {
-
-            self.resizeTo(
+        return this.evaluate(
+            (width, height)  =>  self.resizeTo(
                 self.outerWidth - self.innerWidth + width,
                 self.outerHeight - self.innerHeight + height
-            );
-        },  width,  height);
+            ),
+            width,
+            height
+        );
     }
 
     /**
@@ -492,13 +469,12 @@ class Page extends EventEmitter {
     async viewport() {
 
         return Object.assign(
-            await this.evaluate(function () {
-
-                return {
+            await this.evaluate(
+                () => ({
                     width:     self.innerWidth,
                     height:    self.innerHeight
-                };
-            }),
+                })
+            ),
             {
                 deviceScaleFactor:    1,
                 isMobile:             false,
@@ -526,11 +502,10 @@ class Page extends EventEmitter {
 
         if ( path )  content = FS.readFileSync(path,  {encoding: 'utf-8'});
 
-        return  this.evaluateHandle(function (content, url) {
+        return this.evaluateHandle(
+            (content, url)  =>  new Promise((resolve, reject)  =>  {
 
-            var CSS;
-
-            return  new Promise(function (resolve, reject) {
+                var CSS;
 
                 if (! url) {
 
@@ -548,8 +523,10 @@ class Page extends EventEmitter {
                 CSS.rel = 'stylesheet',  CSS.href = url;
 
                 document.head.appendChild( CSS );
-            });
-        },  content,  url);
+            }),
+            content,
+            url
+        );
     }
 
     /**
@@ -569,19 +546,20 @@ class Page extends EventEmitter {
 
         if ( path )  content = FS.readFileSync(path,  {encoding: 'utf-8'});
 
-        return  this.evaluateHandle(function (content, url) {
+        return this.evaluateHandle(
+            (content, url)  =>  new Promise((resolve, reject)  =>  {
 
-            var JS = document.createElement('script');
+                var JS = document.createElement('script');
 
-            JS[url ? 'src' : 'text'] = url || content;
-
-            return  new Promise(function (resolve, reject) {
+                JS[url ? 'src' : 'text'] = url || content;
 
                 JS.onload = resolve.bind(null, JS), JS.onerror = reject;
 
                 document.head.appendChild( JS );
-            });
-        },  content,  url);
+            }),
+            content,
+            url
+        );
     }
 
     /**
@@ -699,7 +677,7 @@ class Page extends EventEmitter {
 
     async centerOf(selector) {
 
-        const BCR = await this.evaluate(function (selector) {
+        const BCR = await this.evaluate(selector => {
 
             var BCR = document.querySelector( selector ).getBoundingClientRect();
 
@@ -796,7 +774,7 @@ class Page extends EventEmitter {
 
         if (! this._renderer) {
 
-            await this.require('html2canvas');
+            await this._context.require('html2canvas');
 
             this._renderer = true;
         }
@@ -804,7 +782,7 @@ class Page extends EventEmitter {
         if ( options.path )  options.type = Path.extname( options.path );
 
         var image = await this.evaluate(
-            function (type, quality, fullPage, options) {
+            (type, quality, fullPage, options)  =>  {
 
                 if (type === 'jpg')  type = 'jpeg';
 

@@ -20,12 +20,13 @@ class Mouse {
 
     isSameElement(pointA, pointB) {
 
-        return  this._page.evaluate(function (A, B) {
-
-            return  document.elementFromPoint(A[0], A[1]).isSameNode(
+        return  this._page.evaluate(
+            (A, B)  =>  document.elementFromPoint(A[0], A[1]).isSameNode(
                 document.elementFromPoint(B[0], B[1])
-            );
-        },  pointA,  pointB);
+            ),
+            pointA,
+            pointB
+        );
     }
 
     trigger(name,  bubble,  cancel,  options = { }) {
