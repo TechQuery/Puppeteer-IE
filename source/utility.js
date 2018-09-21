@@ -7,7 +7,7 @@ exports.waitFor = function (timeOut = 30000,  filter,  notNull) {
     else
         filter = (filter instanceof Function)  &&  filter;
 
-    return  new Promise(function (resolve, reject) {
+    return  new Promise((resolve, reject) => {
 
         var start = Date.now();
 

@@ -16,5 +16,14 @@
     ],
     "markdown":     {
         "hardwrap":    true
+    },
+    "docdash":      {
+        "search":  true,
+        "menu":    {
+            "Source code":  {
+                "href":    "https://github.com/TechQuery/Puppeteer-IE",
+                "target":  "_blank"
+            }
+        }
     }
 }

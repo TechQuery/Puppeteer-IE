@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-const FS = require('fs-extra');
+const { readFile, writeFile } = require('fs-extra');
 
 const FS_match = require('fs-match'), Beautify = require('js-beautify').html;
 
@@ -14,9 +14,9 @@ Promise.all(
 
         console.log(file = file.trim());
 
-        const code = await FS.readFile( file );
+        const code = await readFile( file );
 
-        return  await FS.writeFile(
+        return  await writeFile(
             file,  Beautify(code.toString('utf-8'),  {'max-preserve-newlines': 3})
         );
     })

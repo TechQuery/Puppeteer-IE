@@ -1,8 +1,11 @@
 'use strict';
 
-const Crypto = require('crypto'), FS = require('fs');    require('should');
+const { createHash } = require('crypto');
 
-const Page = require('../source/Page'), WebServer = require('koapache');
+const { readFileSync, unlinkSync } = require('fs');
+
+const Page = require('../source/Page'), WebServer = require('koapache').default;
+
 
 const page = new Page(
     process.env.npm_config_argv.indexOf('--inspect')  <  0
@@ -18,7 +21,7 @@ describe('Page',  () => {
 
     before(async () => {
 
-        URL_root = await WebServer('./docs/');
+        URL_root = await (new WebServer('./docs/')).workerHost();
 
         URL_root = `http://${URL_root.address}:${URL_root.port}/`;
 
@@ -78,7 +81,7 @@ describe('Page',  () => {
 
             const list = (await page.$$('h2 a')).map(link => link.textContent);
 
-            list.should.be.eql( ['Home'] );
+            list.should.be.eql( ['Home', 'Source code'] );
         });
     });
 
@@ -152,10 +155,7 @@ describe('Page',  () => {
 
     it('Console event',  async () => {
 
-        var event = new Promise((resolve) => {
-
-            page.on('console', resolve);
-        });
+        var event = new Promise(resolve  =>  page.on('console', resolve));
 
         await page.evaluate('console.log("test")');
 
@@ -254,7 +254,7 @@ describe('Page',  () => {
 
         it('Define & Use',  async () => {
 
-            const MD5 = raw  =>  Crypto.createHash('md5').update( raw ).digest('hex');
+            const MD5 = raw  =>  createHash('md5').update( raw ).digest('hex');
 
             await page.exposeFunction('MD5', MD5);
 
@@ -313,13 +313,10 @@ describe('Page',  () => {
 
         it('.prototype.type()',  async () => {
 
-            const input = await page.$('h1');
+            await page.type('input[type="text"]', 'Puppeteer');
 
-            input.setAttribute('contentEditable', true);
-
-            await page.type('h1', ', Hello!');
-
-            input.innerText.should.be.equal('Puppeteer-IE, Hello!');
+            (await page.$('input[type="text"]')).value
+                .should.be.equal('Puppeteer');
         });
     });
 
@@ -347,16 +344,16 @@ describe('Page',  () => {
         });
     });
 
+    const path = 'test/temp.png';
+
     it('.prototype.screenshot()',  async () => {
-
-        const path = 'test/temp.png';
-
-        if (FS.existsSync( path ))  FS.unlinkSync( path );
 
         const buffer = await page.screenshot({ path });
 
         buffer.length.should.be.greaterThan( 0 );
 
-        FS.readFileSync( path ).length.should.be.greaterThan( 0 );
+        readFileSync( path ).length.should.be.greaterThan( 0 );
     });
+
+    after(()  =>  unlinkSync( path ));
 });

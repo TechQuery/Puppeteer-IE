@@ -2,8 +2,10 @@
 <html lang="en">
 
 <head>
+
     <meta charset="utf-8">
     <title>Mouse.js - Documentation</title>
+
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -12,19 +14,24 @@
     <![endif]-->
     <link type="text/css" rel="stylesheet" href="styles/prettify.css">
     <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
 
     <input type="checkbox" id="nav-trigger" class="nav-trigger" />
     <label for="nav-trigger" class="navicon-button x">
-  <div class="navicon"></div>
-</label>
+        <div class="navicon"></div>
+    </label>
 
     <label for="nav-trigger" class="overlay"></label>
 
     <nav>
+
+        <input type="text" id="nav-search" placeholder="Search" />
+
         <h2><a href="index.html">Home</a></h2>
+        <h2><a href="https://github.com/TechQuery/Puppeteer-IE" target="_blank">Source code</a></h2>
         <h3>Classes</h3>
         <ul>
             <li><a href="Browser.html">Browser</a>
@@ -96,7 +103,7 @@
             <article>
                 <pre class="prettyprint source linenums"><code>'use strict';
 
-const Utility = require('./utility');
+const { waitFor } = require('./utility');
 
 
 class Mouse {
@@ -211,6 +218,8 @@ class Mouse {
     }
 
     /**
+     * @param {number} x
+     * @param {number} y
      * @param {object} [options]
      * @param {string} [options.button='left'] `left`, `right`, or `middle`
      * @param {number} [options.clickCount=1]  {@link https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail|UIEvent.detail}
@@ -224,7 +233,7 @@ class Mouse {
 
         await this.down( options );
 
-        if ( options.delay )  await Utility.waitFor( options.delay );
+        if ( options.delay )  await waitFor( options.delay );
 
         await this.up( options );
     }
@@ -247,6 +256,11 @@ module.exports = Mouse;
         prettyPrint();
     </script>
     <script src="scripts/linenumber.js"></script>
+
+    <script src="scripts/jquery-3.1.1.min.js"></script>
+
+    <script src="scripts/search.js"></script>
+
 </body>
 
 </html>

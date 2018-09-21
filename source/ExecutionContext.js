@@ -1,8 +1,15 @@
 'use strict';
 
-const FS = require('fs'), Path = require('path'), babel = require('babel-core');
+const { readFileSync } = require('fs'), { join } = require('path');
 
-const Utility = require('./utility');
+const { currentModulePath, toES_5 } = require('@tech_query/node-toolkit');
+
+const { waitFor } = require('./utility');
+
+
+const BrowserService = readFileSync(
+    join(currentModulePath(),  '../BrowserService.js')
+) + '';
 
 
 class ConsoleMessage {
@@ -30,7 +37,7 @@ class ExecutionContext {
         const window = this._page.window;
 
         window.execScript(
-            FS.readFileSync(
+            readFileSync(
                 require.resolve(`${module}/dist/${file || module}.min`),
                 {encoding: 'utf-8'}
             )
@@ -42,23 +49,18 @@ class ExecutionContext {
                 setTimeout( check );
         })`);
 
-        await Utility.waitFor(()  =>  (window.name === 'true'));
+        await waitFor(()  =>  (window.name === 'true'));
 
         window.name = '';
     }
 
     async attach() {
 
-        await this.require('babel-polyfill', 'polyfill', 'Promise');
+        await this.require('@babel/polyfill', 'polyfill', 'Promise');
 
         if (this._interval != null)  clearInterval( this._interval );
 
-        this._page.window.execScript(
-            FS.readFileSync(
-                Path.resolve(Path.dirname( module.id ),  'BrowserService.js'),
-                {encoding: 'utf-8'}
-            )
-        );
+        this._page.window.execScript( BrowserService );
 
         this._interval = setInterval( this.readMessage.bind( this ) );
 
@@ -119,29 +121,19 @@ class ExecutionContext {
         }
     }
 
-    static toES5(code) {
-
-        return  babel.transform(code, {
-            presets:    ['es2015', 'es2016', 'es2017'],
-            ast:        false
-        }).code.replace(
-            /(?:'|")use strict(?:'|");\s*\(([\s\S]+)\);/, '$1'
-        );
-    }
-
     evaluate(expression, ...parameter) {
 
         const key = Date.now();
 
-        const promise = new Promise((resolve, reject) => {
+        const promise = new Promise(
+            (resolve, reject)  =>  this._pending[ key ] = [resolve, reject]
+        );
 
-            this._pending[ key ] = [resolve, reject];
-        });
+        expression = (expression instanceof Function)  ?
+            toES_5(`(${ expression })`)  :
+            JSON.stringify( toES_5(expression + '') );
 
-        if (expression instanceof Function)
-            expression = ExecutionContext.toES5(`(${ expression })`);
-        else
-            expression = JSON.stringify( ExecutionContext.toES5( expression ) );
+        expression = expression.replace(/;$/, '');
 
         try {
             this._page.window.execScript(

@@ -2,8 +2,10 @@
 <html lang="en">
 
 <head>
+
     <meta charset="utf-8">
     <title>Mouse - Documentation</title>
+
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -12,19 +14,24 @@
     <![endif]-->
     <link type="text/css" rel="stylesheet" href="styles/prettify.css">
     <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
 
     <input type="checkbox" id="nav-trigger" class="nav-trigger" />
     <label for="nav-trigger" class="navicon-button x">
-  <div class="navicon"></div>
-</label>
+        <div class="navicon"></div>
+    </label>
 
     <label for="nav-trigger" class="overlay"></label>
 
     <nav>
+
+        <input type="text" id="nav-search" placeholder="Search" />
+
         <h2><a href="index.html">Home</a></h2>
+        <h2><a href="https://github.com/TechQuery/Puppeteer-IE" target="_blank">Source code</a></h2>
         <h3>Classes</h3>
         <ul>
             <li><a href="Browser.html">Browser</a>
@@ -100,14 +107,17 @@
                     Mouse
                 </h2>
 
+
             </header>
 
             <article>
+
                 <div class="container-overview">
 
                     <h4 class="name" id="Mouse"><span class="type-signature"></span>new Mouse<span class="signature">(page)</span><span class="type-signature"></span></h4>
 
                     <dl class="details">
+
 
                         <dt class="tag-source">Source:</dt>
                         <dd class="tag-source">
@@ -121,16 +131,67 @@
                     </dl>
 
                     <div class="description">
-                        <div class="class-diagram"><svg width="120" height="70" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"><defs><marker id="Arrow" refY="2.5" orient="auto" style="overflow: visible;"><path d="M 0 0 L 5 2.5 L 0 5 z"></path></marker><style type="text/css"><![CDATA[rect {stroke-width: 2; stroke: black; fill: white;} a {cursor: pointer;} a text {fill: blue; text-decoration: underline;} path {stroke-width: 2; stroke: black; fill: none;} marker path {stroke-width:0; fill:black;} .child rect, .parent rect {stroke: blue;} .mixin rect {stroke: green;}]]></style></defs><g transform="translate(0, 20)"><g class="noi" transform="translate(10, 0)"><rect width="100" height="30"></rect><text dx="10" dy="20">Mouse</text></g></g></svg></div>undefined
+                        <div class="class-diagram"><svg width="120" height="70" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+                                <defs>
+                                    <marker id="Arrow" refY="2.5" orient="auto" style="overflow: visible;">
+                                        <path d="M 0 0 L 5 2.5 L 0 5 z"></path>
+                                    </marker>
+                                    <style type="text/css">
+                                        < ![CDATA[rect {
+                                            stroke-width: 2;
+                                            stroke: black;
+                                            fill: white;
+                                        }
+
+                                        a {
+                                            cursor: pointer;
+                                        }
+
+                                        a text {
+                                            fill: blue;
+                                            text-decoration: underline;
+                                        }
+
+                                        path {
+                                            stroke-width: 2;
+                                            stroke: black;
+                                            fill: none;
+                                        }
+
+                                        marker path {
+                                            stroke-width: 0;
+                                            fill: black;
+                                        }
+
+                                        .child rect,
+                                        .parent rect {
+                                            stroke: blue;
+                                        }
+
+                                        .mixin rect {
+                                            stroke: green;
+                                        }
+
+                                        ]]>
+                                    </style>
+                                </defs>
+                                <g transform="translate(0, 20)">
+                                    <g class="noi" transform="translate(10, 0)">
+                                        <rect width="100" height="30"></rect><text dx="10" dy="20">Mouse</text>
+                                    </g>
+                                </g>
+                            </svg></div>undefined
                     </div>
 
                     <h5>Parameters:</h5>
+
 
                     <table class="params">
                         <thead>
                             <tr>
 
                                 <th>Name</th>
+
 
                                 <th>Type</th>
 
@@ -140,11 +201,14 @@
 
                         <tbody>
 
+
                             <tr>
 
                                 <td class="name"><code>page</code></td>
 
+
                                 <td class="type">
+
 
                                     <span class="param-type"><a href="Page.html">Page</a></span>
 
@@ -155,6 +219,7 @@
                                 </td>
                             </tr>
 
+
                         </tbody>
                     </table>
 
@@ -162,15 +227,16 @@
 
                 <h3 class="subsection-title">Methods</h3>
 
-                <h4 class="name" id="click"><span class="type-signature">(async) </span>click<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
+                <h4 class="name" id="click"><span class="type-signature">(async) </span>click<span class="signature">(x, y, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
 
                 <dl class="details">
+
 
                     <dt class="tag-source">Source:</dt>
                     <dd class="tag-source">
                         <ul class="dummy">
                             <li>
-                                <a href="Mouse.js.html">Mouse.js</a>, <a href="Mouse.js.html#line125">line 125</a>
+                                <a href="Mouse.js.html">Mouse.js</a>, <a href="Mouse.js.html#line127">line 127</a>
                             </li>
                         </ul>
                     </dd>
@@ -179,13 +245,16 @@
 
                 <h5>Parameters:</h5>
 
+
                 <table class="params">
                     <thead>
                         <tr>
 
                             <th>Name</th>
 
+
                             <th>Type</th>
+
 
                             <th>Attributes</th>
 
@@ -195,15 +264,59 @@
 
                     <tbody>
 
+
+                        <tr>
+
+                            <td class="name"><code>x</code></td>
+
+
+                            <td class="type">
+
+
+                                <span class="param-type">number</span>
+
+                            </td>
+
+
+                            <td class="attributes">
+
+                            </td>
+
+                            <td class="description last"></td>
+                        </tr>
+
+                        <tr>
+
+                            <td class="name"><code>y</code></td>
+
+
+                            <td class="type">
+
+
+                                <span class="param-type">number</span>
+
+                            </td>
+
+
+                            <td class="attributes">
+
+                            </td>
+
+                            <td class="description last"></td>
+                        </tr>
+
                         <tr>
 
                             <td class="name"><code>options</code></td>
 
+
                             <td class="type">
+
 
                                 <span class="param-type">object</span>
 
                             </td>
+
 
                             <td class="attributes">
 
@@ -214,17 +327,21 @@
                             <td class="description last">
                                 <h6>Properties</h6>
 
+
                                 <table class="params">
                                     <thead>
                                         <tr>
 
                                             <th>Name</th>
 
+
                                             <th>Type</th>
+
 
                                             <th>Attributes</th>
 
                                             <th>Default</th>
+
 
                                             <th class="last">Description</th>
                                         </tr>
@@ -232,15 +349,19 @@
 
                                     <tbody>
 
+
                                         <tr>
 
                                             <td class="name"><code>button</code></td>
 
+
                                             <td class="type">
+
 
                                                 <span class="param-type">string</span>
 
                                             </td>
+
 
                                             <td class="attributes">
 
@@ -254,6 +375,7 @@
 
                                             </td>
 
+
                                             <td class="description last">
                                                 <p><code>left</code>, <code>right</code>, or <code>middle</code></p>
                                             </td>
@@ -263,11 +385,14 @@
 
                                             <td class="name"><code>clickCount</code></td>
 
+
                                             <td class="type">
+
 
                                                 <span class="param-type">number</span>
 
                                             </td>
+
 
                                             <td class="attributes">
 
@@ -281,6 +406,7 @@
 
                                             </td>
 
+
                                             <td class="description last">
                                                 <p><a href="https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail">UIEvent.detail</a></p>
                                             </td>
@@ -290,11 +416,14 @@
 
                                             <td class="name"><code>delay</code></td>
 
+
                                             <td class="type">
+
 
                                                 <span class="param-type">number</span>
 
                                             </td>
+
 
                                             <td class="attributes">
 
@@ -308,16 +437,19 @@
 
                                             </td>
 
+
                                             <td class="description last">
                                                 <p>Time to wait between <code>mousedown</code> and <code>mouseup</code> in milliseconds</p>
                                             </td>
                                         </tr>
+
 
                                     </tbody>
                                 </table>
 
                             </td>
                         </tr>
+
 
                     </tbody>
                 </table>
@@ -326,11 +458,12 @@
 
                 <dl class="param-type">
                     <dt>
-        Type
-    </dt>
+                        Type
+                    </dt>
                     <dd>
 
                         <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
 
                     </dd>
                 </dl>
@@ -338,6 +471,7 @@
                 <h4 class="name" id="down"><span class="type-signature"></span>down<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
 
                 <dl class="details">
+
 
                     <dt class="tag-source">Source:</dt>
                     <dd class="tag-source">
@@ -356,13 +490,16 @@
 
                 <h5>Parameters:</h5>
 
+
                 <table class="params">
                     <thead>
                         <tr>
 
                             <th>Name</th>
 
+
                             <th>Type</th>
+
 
                             <th>Attributes</th>
 
@@ -372,15 +509,19 @@
 
                     <tbody>
 
+
                         <tr>
 
                             <td class="name"><code>options</code></td>
 
+
                             <td class="type">
+
 
                                 <span class="param-type">object</span>
 
                             </td>
+
 
                             <td class="attributes">
 
@@ -391,17 +532,21 @@
                             <td class="description last">
                                 <h6>Properties</h6>
 
+
                                 <table class="params">
                                     <thead>
                                         <tr>
 
                                             <th>Name</th>
 
+
                                             <th>Type</th>
+
 
                                             <th>Attributes</th>
 
                                             <th>Default</th>
+
 
                                             <th class="last">Description</th>
                                         </tr>
@@ -409,15 +554,19 @@
 
                                     <tbody>
 
+
                                         <tr>
 
                                             <td class="name"><code>button</code></td>
 
+
                                             <td class="type">
+
 
                                                 <span class="param-type">string</span>
 
                                             </td>
+
 
                                             <td class="attributes">
 
@@ -431,6 +580,7 @@
 
                                             </td>
 
+
                                             <td class="description last">
                                                 <p><code>left</code>, <code>right</code>, or <code>middle</code></p>
                                             </td>
@@ -440,11 +590,14 @@
 
                                             <td class="name"><code>clickCount</code></td>
 
+
                                             <td class="type">
+
 
                                                 <span class="param-type">number</span>
 
                                             </td>
+
 
                                             <td class="attributes">
 
@@ -458,16 +611,19 @@
 
                                             </td>
 
+
                                             <td class="description last">
                                                 <p><a href="https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail">UIEvent.detail</a></p>
                                             </td>
                                         </tr>
+
 
                                     </tbody>
                                 </table>
 
                             </td>
                         </tr>
+
 
                     </tbody>
                 </table>
@@ -476,11 +632,12 @@
 
                 <dl class="param-type">
                     <dt>
-        Type
-    </dt>
+                        Type
+                    </dt>
                     <dd>
 
                         <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
 
                     </dd>
                 </dl>
@@ -488,6 +645,7 @@
                 <h4 class="name" id="move"><span class="type-signature">(async) </span>move<span class="signature">(x, y, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
 
                 <dl class="details">
+
 
                     <dt class="tag-source">Source:</dt>
                     <dd class="tag-source">
@@ -506,13 +664,16 @@
 
                 <h5>Parameters:</h5>
 
+
                 <table class="params">
                     <thead>
                         <tr>
 
                             <th>Name</th>
 
+
                             <th>Type</th>
+
 
                             <th>Attributes</th>
 
@@ -522,15 +683,19 @@
 
                     <tbody>
 
+
                         <tr>
 
                             <td class="name"><code>x</code></td>
 
+
                             <td class="type">
+
 
                                 <span class="param-type">number</span>
 
                             </td>
+
 
                             <td class="attributes">
 
@@ -543,11 +708,14 @@
 
                             <td class="name"><code>y</code></td>
 
+
                             <td class="type">
+
 
                                 <span class="param-type">number</span>
 
                             </td>
+
 
                             <td class="attributes">
 
@@ -560,11 +728,14 @@
 
                             <td class="name"><code>options</code></td>
 
+
                             <td class="type">
+
 
                                 <span class="param-type">object</span>
 
                             </td>
+
 
                             <td class="attributes">
 
@@ -575,15 +746,18 @@
                             <td class="description last">
                                 <h6>Properties</h6>
 
+
                                 <table class="params">
                                     <thead>
                                         <tr>
 
                                             <th>Name</th>
 
+
                                             <th>Type</th>
 
                                             <th>Default</th>
+
 
                                             <th class="last">Description</th>
                                         </tr>
@@ -591,11 +765,14 @@
 
                                     <tbody>
 
+
                                         <tr>
 
                                             <td class="name"><code>steps</code></td>
 
+
                                             <td class="type">
+
 
                                                 <span class="param-type">number</span>
 
@@ -607,16 +784,19 @@
 
                                             </td>
 
+
                                             <td class="description last">
                                                 <p>Sends intermediate <code>mousemove</code> events</p>
                                             </td>
                                         </tr>
+
 
                                     </tbody>
                                 </table>
 
                             </td>
                         </tr>
+
 
                     </tbody>
                 </table>
@@ -625,11 +805,12 @@
 
                 <dl class="param-type">
                     <dt>
-        Type
-    </dt>
+                        Type
+                    </dt>
                     <dd>
 
                         <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
 
                     </dd>
                 </dl>
@@ -637,6 +818,7 @@
                 <h4 class="name" id="up"><span class="type-signature"></span>up<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#Promise">Promise</a>}</span></h4>
 
                 <dl class="details">
+
 
                     <dt class="tag-source">Source:</dt>
                     <dd class="tag-source">
@@ -655,13 +837,16 @@
 
                 <h5>Parameters:</h5>
 
+
                 <table class="params">
                     <thead>
                         <tr>
 
                             <th>Name</th>
 
+
                             <th>Type</th>
+
 
                             <th>Attributes</th>
 
@@ -671,15 +856,19 @@
 
                     <tbody>
 
+
                         <tr>
 
                             <td class="name"><code>options</code></td>
 
+
                             <td class="type">
+
 
                                 <span class="param-type">object</span>
 
                             </td>
+
 
                             <td class="attributes">
 
@@ -690,17 +879,21 @@
                             <td class="description last">
                                 <h6>Properties</h6>
 
+
                                 <table class="params">
                                     <thead>
                                         <tr>
 
                                             <th>Name</th>
 
+
                                             <th>Type</th>
+
 
                                             <th>Attributes</th>
 
                                             <th>Default</th>
+
 
                                             <th class="last">Description</th>
                                         </tr>
@@ -708,15 +901,19 @@
 
                                     <tbody>
 
+
                                         <tr>
 
                                             <td class="name"><code>button</code></td>
 
+
                                             <td class="type">
+
 
                                                 <span class="param-type">string</span>
 
                                             </td>
+
 
                                             <td class="attributes">
 
@@ -730,6 +927,7 @@
 
                                             </td>
 
+
                                             <td class="description last">
                                                 <p><code>left</code>, <code>right</code>, or <code>middle</code></p>
                                             </td>
@@ -739,11 +937,14 @@
 
                                             <td class="name"><code>clickCount</code></td>
 
+
                                             <td class="type">
+
 
                                                 <span class="param-type">number</span>
 
                                             </td>
+
 
                                             <td class="attributes">
 
@@ -757,16 +958,19 @@
 
                                             </td>
 
+
                                             <td class="description last">
                                                 <p><a href="https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail">UIEvent.detail</a></p>
                                             </td>
                                         </tr>
+
 
                                     </tbody>
                                 </table>
 
                             </td>
                         </tr>
+
 
                     </tbody>
                 </table>
@@ -775,11 +979,12 @@
 
                 <dl class="param-type">
                     <dt>
-        Type
-    </dt>
+                        Type
+                    </dt>
                     <dd>
 
                         <span class="param-type"><a href="global.html#Promise">Promise</a></span>
+
 
                     </dd>
                 </dl>
@@ -800,6 +1005,11 @@
         prettyPrint();
     </script>
     <script src="scripts/linenumber.js"></script>
+
+    <script src="scripts/jquery-3.1.1.min.js"></script>
+
+    <script src="scripts/search.js"></script>
+
 </body>
 
 </html>

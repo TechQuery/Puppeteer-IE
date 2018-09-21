@@ -18,6 +18,11 @@
         "semi": ["error", "always"],
         "no-console": ["error", {
             "allow": ["info", "warn", "error", "time", "timeEnd"]
+        }],
+        "valid-jsdoc": ["error", {
+            "requireParamDescription": false,
+            "requireReturn": false,
+            "requireReturnDescription": false
         }]
     },
     "globals": {

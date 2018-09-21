@@ -1,8 +1,14 @@
 'use strict';
 
-const EventEmitter = require('events'), FS = require('fs'), Path = require('path');
+const EventEmitter = require('events');
 
-const WinAX = require('winax'), Cookie = require('cookie'), Utility = require('./utility');
+const { readFileSync, writeFileSync } = require('fs');
+
+const { extname } = require('path');
+
+const { release } = require('winax'), { parse, serialize } = require('cookie');
+
+const { waitFor, proxyCOM } = require('./utility');
 
 const ExecutionContext = require('./ExecutionContext'), Mouse = require('./Mouse');
 
@@ -36,10 +42,7 @@ class Page extends EventEmitter {
     /**
      * @return {string}
      */
-    url() {
-
-        return  this._target.LocationURL + '';
-    }
+    url() {  return  this._target.LocationURL + '';  }
 
     /**
      * @param {object} [options]
@@ -49,14 +52,14 @@ class Page extends EventEmitter {
      */
     async waitForNavigation(options = {timeout: 30000}) {
 
-        await Utility.waitFor(
+        await waitFor(
             options.timeout,
             ()  =>  this._target.Busy  &&  (this._target.Busy == false)
         );
 
-        this.document = Utility.proxyCOM( this._target.Document );
+        this.document = proxyCOM( this._target.Document );
 
-        this.window = Utility.proxyCOM( this.document.defaultView );
+        this.window = proxyCOM( this.document.defaultView );
 
         await this._context.attach();
 
@@ -149,29 +152,26 @@ class Page extends EventEmitter {
         try {
             this._target.Quit();
 
-            WinAX.release( this._target );
+            release( this._target );
 
         } catch (error) {  console.warn( error );  }
 
         this.emit('close');
     }
 
-    get cookie() {
-
-        return  Cookie.parse(this.document.cookie + '');
-    }
+    get cookie() {  return  parse(this.document.cookie + '');  }
 
     set cookie(object) {
 
         for (let name in object)
             if (typeof object[ name ] === 'string')
-                this.document.cookie = Cookie.serialize(name, object[name]);
+                this.document.cookie = serialize(name, object[name]);
             else {
                 let option = object[ name ], value = object[ name ].value;
 
                 delete option.name;  delete option.value;  delete option.url;
 
-                this.document.cookie = Cookie.serialize(name, value, option);
+                this.document.cookie = serialize(name, value, option);
             }
     }
 
@@ -262,10 +262,7 @@ class Page extends EventEmitter {
      *
      * @return {Promise}
      */
-    setCookie(...cookies) {
-
-        return  this.pushCookie( cookies );
-    }
+    setCookie(...cookies) {  return  this.pushCookie( cookies );  }
 
     /**
      * @param {object}  cookies
@@ -277,10 +274,7 @@ class Page extends EventEmitter {
      *
      * @return {Promise}
      */
-    deleteCookie(...cookies) {
-
-        return  this.pushCookie(cookies, true);
-    }
+    deleteCookie(...cookies) {  return  this.pushCookie(cookies, true);  }
 
     /**
      * Gets the full HTML contents of the page, including the doctype.
@@ -324,7 +318,7 @@ class Page extends EventEmitter {
      */
     async $(selector) {
 
-        return  Utility.proxyCOM( this.document.querySelector( selector ) );
+        return  proxyCOM( this.document.querySelector( selector ) );
     }
 
     /**
@@ -342,7 +336,7 @@ class Page extends EventEmitter {
         const length = list.length - 0, result = [ ];
 
         for (let i = 0;  i < length;  i++)
-            result[i] = Utility.proxyCOM( list.item(i) );
+            result[i] = proxyCOM( list.item(i) );
 
         return result;
     }
@@ -364,7 +358,7 @@ class Page extends EventEmitter {
      */
     waitForSelector(selector,  options = {timeout: 30000}) {
 
-        return  Utility.waitFor(options.timeout,  () => this.$( selector ));
+        return  waitFor(options.timeout,  () => this.$( selector ));
     }
 
     /**
@@ -389,7 +383,7 @@ class Page extends EventEmitter {
      */
     async evaluateHandle(expression, ...parameter) {
 
-        return Utility.proxyCOM(this.document.all(
+        return proxyCOM(this.document.all(
             await this._context.evaluate(expression, ...parameter)
         ));
     }
@@ -405,7 +399,7 @@ class Page extends EventEmitter {
      */
     waitForFunction(expression,  options = {timeout: 30000},  ...parameter) {
 
-        return Utility.waitFor(
+        return waitFor(
             options.timeout,  this.evaluate.bind(this, expression, ...parameter)
         );
     }
@@ -419,7 +413,7 @@ class Page extends EventEmitter {
      */
     waitFor(condition, options, ...parameter) {
 
-        if (! isNaN( condition ))  return  Utility.waitFor( condition );
+        if (! isNaN( condition ))  return  waitFor( condition );
 
         return this[`waitFor${
             (condition instanceof Function)  ?  'Function'  :  'Selector'
@@ -500,7 +494,7 @@ class Page extends EventEmitter {
      */
     addStyleTag({path, url, content}) {
 
-        if ( path )  content = FS.readFileSync(path,  {encoding: 'utf-8'});
+        if ( path )  content = readFileSync(path,  {encoding: 'utf-8'});
 
         return this.evaluateHandle(
             (content, url)  =>  new Promise((resolve, reject)  =>  {
@@ -544,7 +538,7 @@ class Page extends EventEmitter {
      */
     addScriptTag({path, url, content}) {
 
-        if ( path )  content = FS.readFileSync(path,  {encoding: 'utf-8'});
+        if ( path )  content = readFileSync(path,  {encoding: 'utf-8'});
 
         return this.evaluateHandle(
             (content, url)  =>  new Promise((resolve, reject)  =>  {
@@ -572,10 +566,7 @@ class Page extends EventEmitter {
      * @return {Promise} Promise which resolves when the element matching selector is successfully focused.
      *                   The promise will be rejected if there is no element matching selector.
      */
-    async focus(selector) {
-
-        this.document.querySelector( selector ).focus();
-    }
+    async focus(selector) {  this.document.querySelector( selector ).focus();  }
 
     async trigger(target,  type,  name,  ...parameter) {
 
@@ -594,10 +585,9 @@ class Page extends EventEmitter {
             console.warn( parameter );
         }
 
-        return  await new Promise((resolve) => {
-
-            setTimeout( () => resolve( target.dispatchEvent( event ) ) );
-        });
+        return  await new Promise(resolve =>
+            setTimeout( () => resolve( target.dispatchEvent( event ) ) )
+        );
     }
 
     /**
@@ -653,10 +643,15 @@ class Page extends EventEmitter {
      */
     async type(selector,  text,  options = {delay: 0}) {
 
+        await this.focus( selector );
+
         const target = await this.$( selector );
 
-        const key = (target.contentEditable || (target.designMode === 'on'))  ?
-            'textContent'  :  'value';
+        const key = (
+            (target.contentEditable === 'true')  ||
+            (target.designMode === 'on')
+        ) ?
+            'textContent' : 'value';
 
         for (let i = 0;  text[i];  i++) {
 
@@ -671,7 +666,7 @@ class Page extends EventEmitter {
 
             await this.trigger(target, '', 'input', true, false);
 
-            if ( options.delay )  await Utility.waitFor( options.delay );
+            if ( options.delay )  await waitFor( options.delay );
         }
     }
 
@@ -779,7 +774,7 @@ class Page extends EventEmitter {
             this._renderer = true;
         }
 
-        if ( options.path )  options.type = Path.extname( options.path );
+        if ( options.path )  options.type = extname( options.path );
 
         var image = await this.evaluate(
             (type, quality, fullPage, options)  =>  {
@@ -810,7 +805,7 @@ class Page extends EventEmitter {
 
         image = Buffer.from(image.split(',')[1], 'base64');
 
-        if ( options.path )  FS.writeFileSync(options.path, image);
+        if ( options.path )  writeFileSync(options.path, image);
 
         return image;
     }

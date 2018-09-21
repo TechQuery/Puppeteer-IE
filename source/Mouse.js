@@ -1,6 +1,6 @@
 'use strict';
 
-const Utility = require('./utility');
+const { waitFor } = require('./utility');
 
 
 class Mouse {
@@ -115,6 +115,8 @@ class Mouse {
     }
 
     /**
+     * @param {number} x
+     * @param {number} y
      * @param {object} [options]
      * @param {string} [options.button='left'] `left`, `right`, or `middle`
      * @param {number} [options.clickCount=1]  {@link https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail|UIEvent.detail}
@@ -128,7 +130,7 @@ class Mouse {
 
         await this.down( options );
 
-        if ( options.delay )  await Utility.waitFor( options.delay );
+        if ( options.delay )  await waitFor( options.delay );
 
         await this.up( options );
     }
