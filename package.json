@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-ie",
-  "version": "0.5.5",
+  "version": "0.5.7",
   "descripton": "Headless Internet Explorer NodeJS API inspired by Puppeteer.",
   "keywords": [
     "internet-explorer",
@@ -34,25 +34,29 @@
     "check": "mocha -r should --recursive --no-timeouts -c --inline-diffs",
     "test": "npm run check -- --exit",
     "debug": "npm run check -- --inspect-brk",
-    "prepublishOnly": "npm run build",
-    "precommit": "npm run build  &&  git add ."
+    "prepublishOnly": "npm run build"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run build  &&  git add ."
+    }
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
-    "@tech_query/node-toolkit": "^0.6.1",
+    "@tech_query/node-toolkit": "^0.7.1",
     "cookie": "^0.3.1",
+    "fs-extra": "^7.0.0",
     "html2canvas": "^0.5.0-beta4",
     "winax": "^1.0.14"
   },
   "devDependencies": {
     "docdash": "^1.0.0",
-    "eslint": "^5.6.0",
-    "fs-extra": "^7.0.0",
+    "eslint": "^5.7.0",
     "fs-match": "^0.2.1",
-    "husky": "^0.14.3",
-    "js-beautify": "^1.8.6",
+    "husky": "^1.1.2",
+    "js-beautify": "^1.8.8",
     "jsdoc": "^3.5.5",
-    "jsdoc-inheritance-diagram": "^1.2.1",
+    "jsdoc-inheritance-diagram": "^1.2.3",
     "koapache": "^1.0.4",
     "mocha": "^5.2.0",
     "reduce-blank": "^0.2.0",

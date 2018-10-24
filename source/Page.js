@@ -2,7 +2,7 @@
 
 const EventEmitter = require('events');
 
-const { readFileSync, writeFileSync } = require('fs');
+const { readFile, writeFile } = require('fs-extra');
 
 const { extname } = require('path');
 
@@ -333,7 +333,7 @@ class Page extends EventEmitter {
 
         const list = this.document.querySelectorAll( selector );
 
-        const length = list.length - 0, result = [ ];
+        const length = +list.length, result = [ ];
 
         for (let i = 0;  i < length;  i++)
             result[i] = proxyCOM( list.item(i) );
@@ -386,6 +386,59 @@ class Page extends EventEmitter {
         return proxyCOM(this.document.all(
             await this._context.evaluate(expression, ...parameter)
         ));
+    }
+
+    /**
+     * This method runs `document.querySelector()` within the page
+     * and passes it as the first argument to `runInPage`.
+     * If there's no element matching selector, the method throws an error.
+     *
+     * @param {String}          selector  - A selector to query page for
+     * @param {Function}        runInPage - Function to be evaluated in browser context
+     * @param {...Serializable} parameter - Arguments to pass to `runInPage`
+     *
+     * @return {Promise<Serializable>} Promise which resolves to the return value of `runInPage`
+     */
+    $eval(selector, runInPage, ...parameter) {
+
+        return  this._context.evaluate(
+            (selector, runInPage, ...parameter)  =>  {
+
+                const element = document.querySelector( selector );
+
+                if (! element)
+                    throw Error(
+                        `failed to find element matching selector "${selector}"`
+                    );
+
+                return  eval( runInPage )(element, ...parameter);
+            },
+            selector,
+            runInPage,
+            ...parameter
+        );
+    }
+
+    /**
+     * This method runs `Array.from(document.querySelectorAll(selector))` within the page
+     * and passes it as the first argument to `runInPage`.
+     *
+     * @param {String}          selector  - A selector to query page for
+     * @param {Function}        runInPage - Function to be evaluated in browser context
+     * @param {...Serializable} parameter - Arguments to pass to `runInPage`
+     *
+     * @return {Promise<Serializable>} Promise which resolves to the return value of `runInPage`
+     */
+    $$eval(selector, runInPage, ...parameter) {
+
+        return  this._context.evaluate(
+            (selector, runInPage, ...parameter)  =>  eval( runInPage )(
+                [... document.querySelectorAll( selector )],  ...parameter
+            ),
+            selector,
+            runInPage,
+            ...parameter
+        );
     }
 
     /**
@@ -447,10 +500,19 @@ class Page extends EventEmitter {
     setViewport({width, height}) {
 
         return this.evaluate(
-            (width, height)  =>  self.resizeTo(
-                self.outerWidth - self.innerWidth + width,
-                self.outerHeight - self.innerHeight + height
-            ),
+            (width, height)  =>  {
+
+                const onResize = new Promise(resolve =>
+                    self.addEventListener('resize',  () => resolve())
+                );
+
+                self.resizeTo(
+                    self.outerWidth - self.innerWidth + width,
+                    self.outerHeight - self.innerHeight + height
+                );
+
+                return onResize;
+            },
             width,
             height
         );
@@ -492,11 +554,11 @@ class Page extends EventEmitter {
      * @return {Promise<ElementHandle>} which resolves to the added tag when the stylesheet's onload fires
      *                                  or when the CSS content was injected into frame
      */
-    addStyleTag({path, url, content}) {
+    async addStyleTag({path, url, content}) {
 
-        if ( path )  content = readFileSync(path,  {encoding: 'utf-8'});
+        if ( path )  content = (await readFile( path )) + '';
 
-        return this.evaluateHandle(
+        return  await this.evaluateHandle(
             (content, url)  =>  new Promise((resolve, reject)  =>  {
 
                 var CSS;
@@ -536,11 +598,11 @@ class Page extends EventEmitter {
      * @return {Promise<ElementHandle>} which resolves to the added tag when the script's onload fires
      *                                  or when the script content was injected into frame
      */
-    addScriptTag({path, url, content}) {
+    async addScriptTag({path, url, content}) {
 
-        if ( path )  content = readFileSync(path,  {encoding: 'utf-8'});
+        if ( path )  content = (await readFile( path )) + '';
 
-        return this.evaluateHandle(
+        return  await this.evaluateHandle(
             (content, url)  =>  new Promise((resolve, reject)  =>  {
 
                 var JS = document.createElement('script');
@@ -805,7 +867,7 @@ class Page extends EventEmitter {
 
         image = Buffer.from(image.split(',')[1], 'base64');
 
-        if ( options.path )  writeFileSync(options.path, image);
+        if ( options.path )  await writeFile(options.path, image);
 
         return image;
     }

@@ -38,9 +38,8 @@ class ExecutionContext {
 
         window.execScript(
             readFileSync(
-                require.resolve(`${module}/dist/${file || module}.min`),
-                {encoding: 'utf-8'}
-            )
+                require.resolve(`${module}/dist/${file || module}.min`)
+            ) + ''
         );
 
         window.execScript(`setTimeout(function check() {
@@ -121,6 +120,15 @@ class ExecutionContext {
         }
     }
 
+    static stringify(expression) {
+
+        expression = (expression instanceof Function)  ?
+            toES_5(`(${ expression })`)  :
+            JSON.stringify( toES_5(expression + '') );
+
+        return  expression.replace(/;("?)$/, '$1');
+    }
+
     evaluate(expression, ...parameter) {
 
         const key = Date.now();
@@ -129,17 +137,19 @@ class ExecutionContext {
             (resolve, reject)  =>  this._pending[ key ] = [resolve, reject]
         );
 
-        expression = (expression instanceof Function)  ?
-            toES_5(`(${ expression })`)  :
-            JSON.stringify( toES_5(expression + '') );
+        expression = ExecutionContext.stringify( expression );
 
-        expression = expression.replace(/;$/, '');
+        parameter = JSON.stringify(parameter,  (key, value) => {
+
+            if (value instanceof Function)
+                return  ExecutionContext.stringify( value );
+
+            return value;
+        });
 
         try {
             this._page.window.execScript(
-                `self.puppeteer.execute(
-                    ${key}, ${expression}, ${JSON.stringify( parameter )}
-                )`
+                `self.puppeteer.execute(${key}, ${expression}, ${parameter})`
             );
         } catch (error) {
 

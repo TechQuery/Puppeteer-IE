@@ -2,7 +2,7 @@
 
 const { createHash } = require('crypto');
 
-const { readFileSync, unlinkSync } = require('fs');
+const { readFile, unlink } = require('fs-extra');
 
 const Page = require('../source/Page'), WebServer = require('koapache').default;
 
@@ -153,6 +153,15 @@ describe('Page',  () => {
         });
     });
 
+    it(
+        '.prototype.$eval()',
+        ()  =>  page.$eval(
+            'body',  (body, text) => [body.tagName, text.trim()],  ' '
+        ).should.be.fulfilledWith(
+            ['BODY', '']
+        )
+    );
+
     it('Console event',  async () => {
 
         var event = new Promise(resolve  =>  page.on('console', resolve));
@@ -192,9 +201,7 @@ describe('Page',  () => {
                 url:    'https://cdn.bootcss.com/github-markdown-css/2.10.0/github-markdown.min.css'
             });
 
-            (await page.evaluate(() => {
-
-                var article = document.querySelector('#main article');
+            (await page.$eval('#main article',  article => {
 
                 article.className = 'markdown-body';
 
@@ -287,8 +294,9 @@ describe('Page',  () => {
 
         it('.prototype.select()',  async () => {
 
-            await page.evaluate(
-                HTML  =>  document.querySelector('article').innerHTML = HTML,
+            await page.$eval(
+                'article',
+                (article, HTML)  =>  article.innerHTML = HTML,
                 `<select multiple>
                     <option>0</option>
                     <option>1</option>
@@ -298,7 +306,9 @@ describe('Page',  () => {
 
             (await page.select('select', '1', '2', '3')).should.be.eql(['1', '2']);
 
-            (await page.$$('option')).filter(item => item.selected).map(item => item.value)
+            (await page.$$('option'))
+                .map(item  =>  (item.selected && item.value))
+                .filter( Boolean )
                 .should.be.eql(['1', '2']);
         });
 
@@ -352,8 +362,8 @@ describe('Page',  () => {
 
         buffer.length.should.be.greaterThan( 0 );
 
-        readFileSync( path ).length.should.be.greaterThan( 0 );
+        (await readFile( path )).length.should.be.greaterThan( 0 );
     });
 
-    after(()  =>  unlinkSync( path ));
+    after(()  =>  unlink( path ));
 });
