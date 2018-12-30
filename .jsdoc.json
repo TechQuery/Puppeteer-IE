@@ -6,11 +6,6 @@
         "destination":    "docs/",
         "verbose":        true
     },
-    "templates":    {
-        "default":    {
-            "includeDate":    false
-        }
-    },
     "plugins":      [
         "plugins/markdown", "node_modules/jsdoc-inheritance-diagram"
     ],
