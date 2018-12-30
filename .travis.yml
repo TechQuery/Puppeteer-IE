@@ -2,6 +2,8 @@ branches:
   only:
     - master
 
+os: windows
+
 language: node_js
 node_js:
   - lts/*
@@ -9,6 +11,8 @@ cache:
   directories:
     - node_modules
 
+before_install:
+  - npm install windows-build-tools --global --production
 install:
   - npm install
 script:
