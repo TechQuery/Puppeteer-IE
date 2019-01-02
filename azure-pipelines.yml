@@ -16,7 +16,6 @@ steps:
   displayName: 'Install Node.js'
 
 - bash: |
-    npm install windows-build-tools --global --production
     npm install
     npm run build
     cd ${DOC_FOLDER}
