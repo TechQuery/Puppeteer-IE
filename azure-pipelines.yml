@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  vmImage: 'win2016'
+  vmImage: 'vs2017-win2016'
 
 steps:
 - task: NodeTool@0
@@ -15,15 +15,15 @@ steps:
     versionSpec: '8.x'
   displayName: 'Install Node.js'
 
-- script: |
+- bash: |
     npm install windows-build-tools --global --production
     npm install
-    npm run document
-    cd ${FOLDER}
+    npm run build
+    cd ${DOC_FOLDER}
     git init
-    git config user.name ${UID}
-    git config user.email ${EMAIL}
+    git config user.name ${GIT_USER}
+    git config user.email ${GIT_EMAIL}
     git add .
-    git commit -m "${MESSAGE}"
-    git push --force --quiet https://${TOKEN}@${GIT_URI}.git master:${BRANCH}
+    git commit -m "${GIT_MESSAGE}"
+    git push --force --quiet https://${GIT_TOKEN}@${GIT_URI}.git master:${GIT_BRANCH}
   displayName: 'npm install and build Document'

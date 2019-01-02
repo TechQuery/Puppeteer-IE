@@ -6,7 +6,7 @@ Headless **Internet Explorer** NodeJS API inspired by [Puppeteer](https://pptr.d
 whereas Edge uses the [WebDriver protocol](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) & [DevTools Protocol](https://docs.microsoft.com/en-us/microsoft-edge/devtools-protocol/) for automation.
 So you can control it by [Selenium](http://seleniumhq.github.io/selenium/docs/api/javascript/) or [Edge diagnostics adapter](https://github.com/Microsoft/edge-diagnostics-adapter).
 
-[![Build Status](https://travis-ci.com/TechQuery/Puppeteer-IE.svg?branch=master)](https://travis-ci.com/TechQuery/Puppeteer-IE)
+[![Build Status](https://dev.azure.com/shiy2008/shiy2008/_apis/build/status/TechQuery.Puppeteer-IE?branchName=master)](https://dev.azure.com/shiy2008/shiy2008/_build/latest?definitionId=1?branchName=master)
 
 [![NPM](https://nodei.co/npm/puppeteer-ie.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/puppeteer-ie/)
 

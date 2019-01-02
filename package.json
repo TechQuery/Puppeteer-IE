@@ -32,7 +32,7 @@
     "check": "mocha -r should --recursive --no-timeouts -c --inline-diffs",
     "test": "npm run check -- --exit",
     "debug": "npm run check -- --inspect-brk",
-    "build": "npm run lint  &&  npm test  &&  npm run document",
+    "build": "npm run lint  &&  npm run document",
     "help": "web-server docs/ -o",
     "prepublishOnly": "npm run build"
   },
