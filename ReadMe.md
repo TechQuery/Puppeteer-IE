@@ -2,9 +2,13 @@
 
 Headless **Internet Explorer** NodeJS API inspired by [Puppeteer](https://pptr.dev/).
 
-**[ Notice ]**  [Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) isn't supported by this package as it utilizes [ActiveX](https://msdn.microsoft.com/en-us/library/windows/desktop/ms693753),
-whereas Edge uses the [WebDriver protocol](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) & [DevTools Protocol](https://docs.microsoft.com/en-us/microsoft-edge/devtools-protocol/) for automation.
-So you can control it by [Selenium](http://seleniumhq.github.io/selenium/docs/api/javascript/) or [Edge diagnostics adapter](https://github.com/Microsoft/edge-diagnostics-adapter).
+**[ Notice ]**
+[Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) isn't supported by this package as it utilizes
+[ActiveX](https://msdn.microsoft.com/en-us/library/windows/desktop/ms693753), whereas Internet Explorer uses the
+[WebDriver protocol](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) &
+[DevTools Protocol](https://docs.microsoft.com/en-us/microsoft-edge/devtools-protocol/) for automation.
+You can control Edge using [Selenium](http://seleniumhq.github.io/selenium/docs/api/javascript/) or
+[Edge diagnostics adapter](https://github.com/Microsoft/edge-diagnostics-adapter).
 
 [![Build Status](https://dev.azure.com/shiy2008/shiy2008/_apis/build/status/TechQuery.Puppeteer-IE?branchName=master)](https://dev.azure.com/shiy2008/shiy2008/_build/latest?definitionId=1?branchName=master)
 
