@@ -54,7 +54,7 @@ class Page extends EventEmitter {
 
         await waitFor(
             options.timeout,
-            ()  =>  this._target.Busy  &&  (this._target.Busy == false)
+            ()  =>  (this._target.Busy == false)
         );
 
         this.document = proxyCOM( this._target.Document );
