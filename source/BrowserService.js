@@ -2,28 +2,13 @@
 
     function Puppeteer() {
 
-        this.queue = [ ],  this.stack = { };
-
-        setInterval( this.sendMessage.bind( this ) );
+        this.stack = { };
     }
 
     var slice = Array.prototype.slice;
 
     Puppeteer.prototype = {
         constructor:    Puppeteer,
-        sendMessage:    function () {
-
-            if (self.name  ||  (! this.queue[0]))  return;
-
-            var message = this.queue.shift();
-
-            self.name = [
-                'B',
-                message.type,
-                message.key || '',
-                JSON.stringify( message.data ) || ''
-            ].join('_');
-        },
         sendData:       function (key, data) {
 
             if (arguments.length < 2)  data = key, key = '';
@@ -47,11 +32,7 @@
             else if (data instanceof Element)
                 data = data.sourceIndex;
 
-            this.queue.push({
-                type:    type,
-                data:    data,
-                key:     key
-            });
+            self.postMessage([type,  key || '',  data || ''],  '*');
         },
         execute:        function (key, code, parameter) {
 

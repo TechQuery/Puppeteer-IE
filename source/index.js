@@ -50,7 +50,7 @@ class Puppeteer {
      *
      * @return {Promise<Browser>}
      */
-    static async launch({headless = true} = {}) {
+    static async launch({headless = true} = { }) {
 
         return  stack[stack.push(new Browser( headless )) - 1];
     }
@@ -64,25 +64,25 @@ class Puppeteer {
 
         return  page  &&  (page._target.FullName + '');
     }
-}
 
+    /**
+     * @param {?Error} error
+     */
+    static async exit(error) {
 
-async function clear(error) {
+        await Promise.all( stack.map(browser => browser.close()) );
 
-    await Promise.all( stack.map(browser => browser.close()) );
-
-    if (error instanceof Error) {
+        if (!(error instanceof Error))  process.exit(0);
 
         console.error( error );
 
         process.exit(1);
     }
-
-    process.exit(0);
 }
 
+
 for (let event  of  ['uncaughtException', 'unhandledRejection', 'SIGINT', 'exit'])
-    process.on(event, clear);
+    process.on(event, Puppeteer.exit);
 
 
 module.exports = Puppeteer;

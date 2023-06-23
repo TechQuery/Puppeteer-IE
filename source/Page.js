@@ -277,26 +277,6 @@ class Page extends EventEmitter {
     deleteCookie(...cookies) {  return  this.pushCookie(cookies, true);  }
 
     /**
-     * Gets the full HTML contents of the page, including the doctype.
-     *
-     * @return {Promise<string>}
-     */
-    async content() {
-
-        const DocType = this.document.doctype;
-
-        var type = `<!DocType ${(DocType.name + '').toUpperCase()}`;
-
-        if ( DocType.publicId.valueOf() )
-            type += ` Public "${DocType.publicId}"`;
-
-        if ( DocType.systemId.valueOf() )
-            type += ` "${DocType.systemId}"`;
-
-        return `${type}>${this.document.documentElement.outerHTML}`;
-    }
-
-    /**
      * @param {string} HTML - HTML markup to assign to the page
      */
     async setContent(HTML) {
@@ -471,6 +451,18 @@ class Page extends EventEmitter {
         return this[`waitFor${
             (condition instanceof Function)  ?  'Function'  :  'Selector'
         }`](condition,  options || { },  ...parameter);
+    }
+
+    /**
+     * Gets the full HTML contents of the page, including the doctype.
+     *
+     * @return {Promise<string>}
+     */
+    content() {
+
+        return this.evaluate(
+            ()  =>  ((new XMLSerializer()).serializeToString( document ))
+        );
     }
 
     /**
