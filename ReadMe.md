@@ -1,6 +1,6 @@
 # Puppeteer-IE
 
-Headless **Internet Explorer** NodeJS API inspired by [Puppeteer](https://pptr.dev/).
+NodeJS API for headless **Internet Explorer** inspired by [Puppeteer](https://pptr.dev/).
 
 **[ Notice ]**  [Microsoft Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) isn't supported by this package as it utilizes [ActiveX](https://msdn.microsoft.com/en-us/library/windows/desktop/ms693753),
 whereas Edge uses the [WebDriver protocol](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) & [DevTools Protocol](https://docs.microsoft.com/en-us/microsoft-edge/devtools-protocol/) for automation.
@@ -33,7 +33,7 @@ Only change the Package Name, and then do as [Puppeteer does](https://pptr.dev/#
 
 **[ Recommendation ]**  Use [DayDream](https://github.com/segmentio/daydream) to record operation scripts in [Google Chrome](https://www.google.com/chrome/).
 
-**API document** accesses from https://techquery.github.io/Puppeteer-IE/, `npm docs` or `npm run help`.
+**API document** accesses from https://tech-query.me/Puppeteer-IE/, `npm docs` or `npm run help`.
 
 
 

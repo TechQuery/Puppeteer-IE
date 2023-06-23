@@ -4,8 +4,6 @@ const { readFileSync } = require('fs'), { join } = require('path');
 
 const { currentModulePath, toES_5 } = require('@tech_query/node-toolkit');
 
-const { waitFor } = require('./utility');
-
 
 const BrowserService = readFileSync(
     join(currentModulePath(),  '../BrowserService.js')
@@ -32,9 +30,20 @@ class ExecutionContext {
         this._page = page,  this._pending = { },  this._export = { };
     }
 
-    async require(module, file, namespace) {
+    require(module, file, namespace) {
 
-        const window = this._page.window;
+        const { window } = this._page;
+
+        const ready = new Promise(resolve => {
+
+            function end({ data }) {
+
+                if (data === true)
+                    window.detachEvent('onmessage', end),  resolve();
+            }
+
+            setTimeout(()  =>  window.attachEvent('onmessage', end));
+        });
 
         window.execScript(
             readFileSync(
@@ -44,24 +53,22 @@ class ExecutionContext {
 
         window.execScript(`setTimeout(function check() {
 
-            (self.name = (self.${namespace || module} instanceof Object))  ||
+            if (self.${namespace || module} instanceof Object)
+                self.postMessage(true, '*');
+            else
                 setTimeout( check );
         })`);
 
-        await waitFor(()  =>  (window.name === 'true'));
-
-        window.name = '';
+        return ready;
     }
 
     async attach() {
 
         await this.require('@babel/polyfill', 'polyfill', 'Promise');
 
-        if (this._interval != null)  clearInterval( this._interval );
-
         this._page.window.execScript( BrowserService );
 
-        this._interval = setInterval( this.readMessage.bind( this ) );
+        this._page.window.attachEvent('onmessage',  this.readMessage.bind( this ));
 
         for (let name  in  this._export)
             this.expose(name,  this._export[ name ]);
@@ -77,46 +84,32 @@ class ExecutionContext {
         return error;
     }
 
-    async readMessage() {
+    async readMessage({ data: [type, key, data] }) {
 
-        const window = this._page.window;
+        const [resolve, reject] = this._pending[ key ]  ||  [ ];
 
-        var data = /B_(\w)_(\d*)_([\s\S]*)/.exec( window.name );
-
-        if (! data)  return;
-
-        window.name = '';
-
-        const promise = this._pending[ data[2] ];
-
-        if ( data[3] )  try {
-
-            data[3] = JSON.parse( data[3] );
-
-        } catch (error) {  console.error( error );  }
-
-        switch ( data[1] ) {
+        switch ( type ) {
             case 'R':
-                if ( promise )  promise[0]( data[3] );
+                if ( resolve )  resolve( data );
                 break;
             case 'E':    {
-                let error = ExecutionContext.errorOf( data[3] );
+                let error = ExecutionContext.errorOf( data );
 
-                if ( promise )
-                    promise[1]( error );
+                if ( reject )
+                    reject( error );
                 else
                     this._page.emit('pageerror', error);
 
                 break;
             }
             case 'M':
-                if (data[3].source === 'console')
+                if (data.source === 'console')
                     this._page.emit(
-                        'console',  new ConsoleMessage(data[3].type, data[3].data)
+                        'console',  new ConsoleMessage(data.type, data.data)
                     );
                 break;
             case 'C':
-                await this.execute(data[2], data[3]);
+                await this.execute(key, data);
         }
     }
 
